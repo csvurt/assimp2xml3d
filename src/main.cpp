@@ -31,6 +31,7 @@ int main(int argc, char *argv[]) {
 
 	Assimp::Importer importer;
 	importer.SetPropertyBool(AI_CONFIG_PP_FD_REMOVE, true);
+	importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_POINT | aiPrimitiveType_LINE);
 
 	const aiScene* const scene = importer.ReadFile(input, aiProcessPreset_TargetRealtime_MaxQuality);
 
