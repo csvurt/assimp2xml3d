@@ -11,13 +11,14 @@
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/Exporter.hpp>
+#include "logger.h"
 
 #include <iostream>
 
 extern Assimp::Exporter::ExportFormatEntry Assimp2XML3D_desc;
 
 int invalidUsageExit() {
-	std::cout << "usage: assimp2xml3d [FLAGS] inputFile [outputFile]" << std::endl;
+	std::cout << "usage: assimp2xml3d [-v|--verbose] inputFile outputFile" << std::endl;
 	return -1;
 }
 
@@ -27,7 +28,17 @@ int main(int argc, char *argv[]) {
 		return invalidUsageExit();
 	}
 
-	const char* input = argv[1], *output = argv[2];
+	int nextarg = 1;
+	while (nextarg < argc && argv[nextarg][0] == '-') {
+		if (!strcmp(argv[nextarg], "--verbose") || !strcmp(argv[nextarg], "-v")) {
+			Logger::logLevel = Logger::Level::INFO;
+		}
+		++nextarg;
+	}
+
+	const char* input = argv[nextarg], *output = argv[++nextarg];
+
+	Logger::Info("Beginning Assimp import of " + std::string(input));
 
 	Assimp::Importer importer;
 	importer.SetPropertyBool(AI_CONFIG_PP_FD_REMOVE, true);
@@ -36,13 +47,16 @@ int main(int argc, char *argv[]) {
 	const aiScene* const scene = importer.ReadFile(input, aiProcessPreset_TargetRealtime_MaxQuality);
 
 	if (!scene) {
-		std::cerr << "Assimp: Could not read file " << input << std::endl;
+		Logger::Error("Assimp: Could not read file " + std::string(input));
+		Logger::Error(importer.GetErrorString());
 		return -1;
 	}
 
-	std::cout << "Assimp read file successfully";
+	Logger::Info("Assimp import of " + std::string(input) + " was successful. Beginning export to XML3D.");
 
 	Assimp::Exporter exporter;
 	exporter.RegisterExporter(Assimp2XML3D_desc);
 	exporter.Export(scene, "xml", output);
+
+	Logger::Info("Finished exporting to XML3D.");
 }

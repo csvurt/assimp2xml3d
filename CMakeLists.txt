@@ -26,7 +26,7 @@ include_directories("tinyxml2/")
 set (TINYXML_LIBS ${TINYXML_LIBS} tinyxml2)
 
 ########## Link executable
-add_executable(assimp2xml3d src/main.cpp src/xml3d_exporter.cpp src/xml3d_exporter.h)
+add_executable(assimp2xml3d src/main.cpp src/xml3d_exporter.cpp src/xml3d_exporter.h src/logger.h src/logger.cpp)
 target_link_libraries (assimp2xml3d  ${ASSIMP_LIBS} ${TINYXML_LIBS})
 
 ########## Install executable to bin dir
