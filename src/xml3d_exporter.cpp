@@ -47,9 +47,6 @@ void XML3DExporter::Export() {
 	id = id.substr(0, id.find_first_of('.'));
 	asset->SetAttribute("id", id.c_str());
 
-	// Flatten scene hierarchy into a list of assetmeshes
-	Export(asset, scene->mRootNode, &aiMatrix4x4());
-
 	if (scene->HasMeshes()) {
 		for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
 			Export(asset, scene->mMeshes[i]);
@@ -62,6 +59,8 @@ void XML3DExporter::Export() {
 		}
 	}
 
+	// Flatten scene hierarchy into a list of assetmeshes
+	Export(asset, scene->mRootNode, &aiMatrix4x4());
 }
 
 void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiNode* an, aiMatrix4x4* parentTransform) {
@@ -83,7 +82,6 @@ void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiMesh* am, aiMatrix4x4
 	tinyxml2::XMLElement* mesh = doc.NewElement("assetmesh");
 	tinyxml2::XMLElement* tmat = doc.NewElement("float4x4");
 
-	stringToHTMLId(&am->mName, mUnnamedMeshIndex);
 	mesh->SetAttribute("includes", am->mName.C_Str());
 	mesh->SetAttribute("type", "triangles");
 	tmat->SetAttribute("name", "meshTransform");
@@ -92,7 +90,6 @@ void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiMesh* am, aiMatrix4x4
 	aiMaterial* mat = scene->mMaterials[am->mMaterialIndex];
 	aiString name;
 	mat->Get(AI_MATKEY_NAME, name);
-	stringToHTMLId(&name, mUnnamedMaterialIndex);
 	mat->AddProperty(&name, AI_MATKEY_NAME);
 
 	std::string namestr("#");
@@ -105,6 +102,7 @@ void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiMesh* am, aiMatrix4x4
 
 void XML3DExporter::Export(tinyxml2::XMLElement* asset, aiMesh* am) {
 	tinyxml2::XMLElement* data = doc.NewElement("assetdata");
+	stringToHTMLId(&am->mName);
 	data->SetAttribute("name", am->mName.C_Str());
 
 	//Export indices
@@ -152,6 +150,7 @@ void XML3DExporter::Export(tinyxml2::XMLElement* defs, aiMaterial* amat) {
 	tinyxml2::XMLElement* material = doc.NewElement("material");
 	aiString name;
 	amat->Get(AI_MATKEY_NAME, name);
+	stringToHTMLId(&name);
 	material->SetAttribute("id", name.C_Str());
 	material->SetAttribute("script", "urn:xml3d:material:phong"); //TODO: Choose right shading model
 
@@ -253,16 +252,20 @@ std::string XML3DExporter::toXml3dString(aiFace* f, unsigned int numFaces) {
 	return ss.str();
 }
 
-void XML3DExporter::stringToHTMLId(aiString* ai, unsigned int& counter) {
+void XML3DExporter::stringToHTMLId(aiString* ai) {
 	// Ensure the name is not empty and is safe to use as an HTML5 id string
 	std::string str(ai->C_Str());
 
 	if (!(str.length() > 0)) {
-		str = "_Unnamed_" + boost::lexical_cast<std::string>(counter++);
+		str = "_Generated_Name_" + boost::lexical_cast<std::string>(mChangedNamesCounter++);
 	}
 	if (str.find_first_of(' ') != std::string::npos) {
 		std::replace(str.begin(), str.end(), ' ', '_');
 	}
+	if (usedNames.count(str) > 0) {
+		str += "_" + boost::lexical_cast<std::string>(mChangedNamesCounter++);
+	}
+	usedNames.emplace(str, 'x');
 
 	ai->Set(str);
 }

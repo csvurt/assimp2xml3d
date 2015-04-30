@@ -4,6 +4,7 @@
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
 #include <assimp/scene.h>
+#include <unordered_map>
 #include "tinyxml2.h"
 
 
@@ -23,8 +24,8 @@ public:
 private:
 	aiScene* scene;
 	const char* filename;
-	unsigned int mUnnamedMeshIndex = 0;
-	unsigned int mUnnamedMaterialIndex = 0;
+	unsigned int mChangedNamesCounter = 0;
+	std::unordered_map<std::string, char> usedNames;
 
 	tinyxml2::XMLDocument doc;
 
@@ -32,7 +33,7 @@ private:
 	std::string toXml3dString(aiVector3D* v, unsigned int len, bool toVec2 = false);
 	std::string toXml3dString(aiColor4D* v, unsigned int len, bool toVec3 = false);
 	std::string toXml3dString(aiFace* f, unsigned int len);
-	void stringToHTMLId(aiString* str, unsigned int& counter);
+	void stringToHTMLId(aiString* str);
 
 
 };
