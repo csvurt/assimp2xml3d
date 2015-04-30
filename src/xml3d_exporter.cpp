@@ -1,5 +1,6 @@
 
 #include "xml3d_exporter.h"
+#include "logger.h"
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -208,6 +209,11 @@ std::string XML3DExporter::toXml3dString(aiMatrix4x4* m) {
 		<< m->a2 << ' ' << m->b2 << ' ' << m->c2 << ' ' << m->d2 << ' '
 		<< m->a3 << ' ' << m->b3 << ' ' << m->c3 << ' ' << m->d3 << ' '
 		<< m->a4 << ' ' << m->b4 << ' ' << m->c4 << ' ' << m->d4 << ' ';
+	std::string str = ss.str();
+	if (str.find("NAN") != std::string::npos) {
+		Logger::Warn("Invalid transformation matrix, replacing with Identity: [" + str + "]");
+		return toXml3dString(&aiMatrix4x4());
+	}
 	return ss.str();
 }
 
