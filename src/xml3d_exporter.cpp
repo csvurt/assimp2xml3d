@@ -191,13 +191,72 @@ void XML3DExporter::Export(tinyxml2::XMLElement* defs, aiMaterial* amat) {
 	opacity->SetText(boost::lexical_cast<std::string>(1 - o).c_str());
 	material->LinkEndChild(opacity);
 
+	processTexturesForMaterial(material, amat);
+
 	defs->LinkEndChild(material);
 }
 
-void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiTexture* at) {
-
+void XML3DExporter::processTexturesForMaterial(tinyxml2::XMLElement* matElement, aiMaterial* amat) {
+	// XML3D only supports 1 texture per channel by default, so for now we limit the exporter to that
+	if (amat->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
+		tinyxml2::XMLElement* texElement = processTexture(amat, aiTextureType_DIFFUSE);
+		if (texElement) {
+			texElement->SetAttribute("name", "diffuseTexture");
+			matElement->LinkEndChild(texElement);
+		}
+	}
+	if (amat->GetTextureCount(aiTextureType_SPECULAR) > 0) {
+		tinyxml2::XMLElement* texElement = processTexture(amat, aiTextureType_SPECULAR);
+		if (texElement) {
+			texElement->SetAttribute("name", "specularTexture");
+			matElement->LinkEndChild(texElement);
+		}
+	}
+	if (amat->GetTextureCount(aiTextureType_EMISSIVE) > 0) {
+		tinyxml2::XMLElement* texElement = processTexture(amat, aiTextureType_EMISSIVE);
+		if (texElement) {
+			texElement->SetAttribute("name", "emissiveTexture");
+			matElement->LinkEndChild(texElement);
+		}
+	}
 }
 
+tinyxml2::XMLElement* XML3DExporter::processTexture(aiMaterial* amat, aiTextureType texType) {
+	int wrapS;
+	amat->Get(AI_MATKEY_MAPPINGMODE_U(texType, 0), wrapS);
+	int wrapT;
+	amat->Get(AI_MATKEY_MAPPINGMODE_V(texType, 0), wrapT);
+
+	aiString texPath;
+	amat->Get(AI_MATKEY_TEXTURE(texType, 0), texPath);
+	if (texPath.length <= 0) {
+		Logger::Debug("Could not find texture path for texture channel " + boost::lexical_cast<std::string, int>(texType));
+		aiString matName;
+		amat->Get(AI_MATKEY_NAME, matName);
+		Logger::Warn("Could not process diffuse texture for material " + std::string(matName.C_Str()));
+		return NULL;
+	}
+
+	tinyxml2::XMLElement* texElement = doc.NewElement("texture");
+	texElement->SetAttribute("wraps", mapModeToString(wrapS).c_str());
+	texElement->SetAttribute("wrapt", mapModeToString(wrapT).c_str());
+	tinyxml2::XMLElement* imgElement = doc.NewElement("img");
+	imgElement->SetAttribute("src", texPath.C_Str());
+	texElement->LinkEndChild(imgElement);
+	return texElement;
+}
+
+std::string XML3DExporter::mapModeToString(int mode) {
+	switch (mode) {
+	case aiTextureMapMode_Clamp:
+		return "clamp";
+	case aiTextureMapMode_Wrap:
+		return "repeat";
+	default:
+		Logger::Warn("Unsupported texture wrapping mode encountered.Valid modes are 'clamp' or 'wrap/repeat'.Defaulting to clamp.");
+		return "clamp";
+	}
+}
 
 void XML3DExporter::writeFile() {
 	doc.SaveFile(filename);
