@@ -1,6 +1,6 @@
 #include "logger.h"
 
-Logger::Level Logger::logLevel = Logger::Level::ERROR;
+Logger::Level Logger::logLevel = Logger::Level::WARN;
 
 void Logger::Error(std::string msg) {
 	std::cerr << "[Error]: " << msg.c_str() << std::endl;
