@@ -1,5 +1,5 @@
 
-#include "xml3d_exporter.h"
+#include "mesh_exporter.h"
 #include "logger.h"
 #include <iostream>
 #include <sstream>
@@ -50,7 +50,9 @@ void XML3DExporter::Export() {
 
 	if (scene->HasMeshes()) {
 		for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
-			Export(asset, scene->mMeshes[i]);
+			XML3DMeshExporter mexp(this, scene->mMeshes[i]);
+			tinyxml2::XMLElement* data = mexp.getAssetData();
+			asset->InsertFirstChild(data);
 		}
 	}
 
@@ -71,80 +73,14 @@ void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiNode* an, aiMatrix4x4
 	t = *parentTransform * t;
 
 	for (unsigned int i = 0; i < an->mNumMeshes; i++) {
-		Export(parent, scene->mMeshes[an->mMeshes[i]], &t);
+		XML3DMeshExporter mexp(this, scene->mMeshes[an->mMeshes[i]]);
+		tinyxml2::XMLElement* mesh = mexp.getAssetMesh(&t);
+		parent->LinkEndChild(mesh);
 	}
 
 	for (unsigned int i = 0; i < an->mNumChildren; i++) {
 		Export(parent, an->mChildren[i], &t);
 	}
-}
-
-void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiMesh* am, aiMatrix4x4* parentTransform) {
-	tinyxml2::XMLElement* mesh = doc.NewElement("assetmesh");
-	tinyxml2::XMLElement* tmat = doc.NewElement("float4x4");
-
-	mesh->SetAttribute("includes", am->mName.C_Str());
-	mesh->SetAttribute("type", "triangles");
-	tmat->SetAttribute("name", "meshTransform");
-	tmat->SetText(toXml3dString(parentTransform).c_str());
-
-	aiMaterial* mat = scene->mMaterials[am->mMaterialIndex];
-	aiString name;
-	mat->Get(AI_MATKEY_NAME, name);
-	mat->AddProperty(&name, AI_MATKEY_NAME);
-
-	std::string namestr("#");
-	namestr.append(name.C_Str());
-	mesh->SetAttribute("material", namestr.c_str());
-
-	mesh->LinkEndChild(tmat);
-	parent->LinkEndChild(mesh);
-}
-
-void XML3DExporter::Export(tinyxml2::XMLElement* asset, aiMesh* am) {
-	tinyxml2::XMLElement* data = doc.NewElement("assetdata");
-	stringToHTMLId(&am->mName);
-	data->SetAttribute("name", am->mName.C_Str());
-
-	//Export indices
-	tinyxml2::XMLElement* index = doc.NewElement("int");
-	index->SetAttribute("name", "index");
-	index->SetText(toXml3dString(am->mFaces, am->mNumFaces).c_str());
-	data->LinkEndChild(index);
-
-	//Export positions
-	tinyxml2::XMLElement* pos = doc.NewElement("float3");
-	pos->SetAttribute("name", "position");
-	pos->SetText(toXml3dString(am->mVertices, am->mNumVertices).c_str());
-	data->LinkEndChild(pos);
-
-	//Export normals
-	if (am->HasNormals()) {
-		tinyxml2::XMLElement* norm = doc.NewElement("float3");
-		norm->SetAttribute("name", "normal");
-		norm->SetText(toXml3dString(am->mNormals, am->mNumVertices).c_str());
-		data->LinkEndChild(norm);
-	}
-
-	//Export texcoords
-	if (am->GetNumUVChannels()) {
-		tinyxml2::XMLElement* tc = doc.NewElement("float2");
-		tc->SetAttribute("name", "texcoord");
-		// TODO: UV channel selection
-		tc->SetText(toXml3dString(am->mTextureCoords[0], am->mNumVertices, true).c_str());
-		data->LinkEndChild(tc);
-	}
-
-	//Export colors
-	if (am->GetNumColorChannels()) {
-		tinyxml2::XMLElement* color = doc.NewElement("float3");
-		color->SetAttribute("name", "color");
-		// TODO: Color channel selection
-		color->SetText(toXml3dString(am->mColors[0], am->mNumVertices, true).c_str());
-		data->LinkEndChild(color);
-	}
-
-	asset->InsertFirstChild(data);
 }
 
 void XML3DExporter::Export(tinyxml2::XMLElement* defs, aiMaterial* amat) {
