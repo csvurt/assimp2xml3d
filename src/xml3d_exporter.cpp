@@ -270,6 +270,7 @@ void XML3DExporter::stringToHTMLId(aiString* ai) {
 	}
 	if (usedNames.count(str) > 0) {
 		str += "_" + boost::lexical_cast<std::string>(mChangedNamesCounter++);
+		Logger::Warn("Renamed '" + str.substr(0, str.find_last_of("_")) + "' to '" + str + "' to avoid duplicate IDs");
 	}
 	usedNames.emplace(str, 'x');
 
