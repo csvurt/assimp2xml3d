@@ -1,3 +1,5 @@
+#pragma once
+
 #include "xml3d_exporter.h"
 
 class XML3DMeshExporter {
