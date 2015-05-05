@@ -13,6 +13,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 ########## Gather source files
 SET( HEADER_FILES
 	src/xml3d_exporter.h
+	src/material_exporter.h
 	src/mesh_exporter.h
 	src/logger.h
 )
@@ -20,6 +21,7 @@ SET( HEADER_FILES
 SET( CLASS_FILES
 	src/main.cpp
 	src/xml3d_exporter.cpp
+	src/material_exporter.cpp
 	src/mesh_exporter.cpp
 	src/logger.cpp
 )
