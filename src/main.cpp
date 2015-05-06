@@ -38,8 +38,6 @@ int main(int argc, char *argv[]) {
 		return invalidUsageExit();
 	}
 
-	printHeader();
-
 	int nextarg = 1;
 	while (nextarg < argc && argv[nextarg][0] == '-') {
 		if (!strcmp(argv[nextarg], "--verbose") || !strcmp(argv[nextarg], "-v")) {
@@ -48,7 +46,13 @@ int main(int argc, char *argv[]) {
 		++nextarg;
 	}
 
+	if (nextarg + 1 >= argc) {
+		return invalidUsageExit();
+	}
+
 	const char* input = argv[nextarg], *output = argv[++nextarg];
+
+	printHeader();
 
 	Logger::Info("Beginning Assimp import of " + std::string(input));
 
