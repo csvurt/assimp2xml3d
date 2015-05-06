@@ -30,5 +30,7 @@ private:
 	const char* filename;
 	unsigned int mChangedNamesCounter = 0;
 	std::unordered_map<std::string, char> usedNames;
+	unsigned int mNumberOfMeshesExported = 0;
+	unsigned int mNumberOfMaterialsExported = 0;
 
 };

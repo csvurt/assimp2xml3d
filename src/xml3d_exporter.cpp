@@ -62,11 +62,15 @@ void XML3DExporter::Export() {
 			XML3DMaterialExporter matExp(this, scene->mMaterials[i]);
 			tinyxml2::XMLElement* material = matExp.getMaterial();
 			defs->LinkEndChild(material);
+			mNumberOfMaterialsExported++;
 		}
 	}
 
 	// Flatten scene hierarchy into a list of assetmeshes
 	Export(asset, scene->mRootNode, &aiMatrix4x4());
+
+	Logger::Info("Processed " + boost::lexical_cast<std::string>(mNumberOfMeshesExported) + " meshes and " +
+		boost::lexical_cast<std::string>(mNumberOfMaterialsExported) + " materials.");
 }
 
 void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiNode* an, aiMatrix4x4* parentTransform) {
@@ -79,6 +83,7 @@ void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiNode* an, aiMatrix4x4
 		XML3DMeshExporter mexp(this, scene->mMeshes[an->mMeshes[i]]);
 		tinyxml2::XMLElement* mesh = mexp.getAssetMesh(&t);
 		parent->LinkEndChild(mesh);
+		mNumberOfMeshesExported++;
 	}
 
 	for (unsigned int i = 0; i < an->mNumChildren; i++) {
