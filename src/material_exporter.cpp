@@ -71,6 +71,9 @@ void XML3DMaterialExporter::addTexturesToMaterial(tinyxml2::XMLElement* matEleme
 				texElement->SetAttribute("name", it->second.c_str());
 				matElement->LinkEndChild(texElement);
 			}
+			if (aMat->GetTextureCount(it->first) > 1) {
+				Logger::Warn("Found multiple textures for channel " + std::string(it->second.c_str()) + ", only the first texture will be retained.");
+			}
 		}
 	}
 }
@@ -87,7 +90,7 @@ tinyxml2::XMLElement* XML3DMaterialExporter::processTexture(aiTextureType texTyp
 		Logger::Debug("Could not find texture path for texture channel " + boost::lexical_cast<std::string, int>(texType));
 		aiString matName;
 		aMat->Get(AI_MATKEY_NAME, matName);
-		Logger::Warn("Could not process diffuse texture for material " + std::string(matName.C_Str()));
+		Logger::Warn("Could not process a texture for material " + std::string(matName.C_Str()));
 		return NULL;
 	}
 
@@ -107,7 +110,7 @@ std::string XML3DMaterialExporter::mapModeToString(int mode) {
 	case aiTextureMapMode_Wrap:
 		return "repeat";
 	default:
-		Logger::Warn("Unsupported texture wrapping mode encountered.Valid modes are 'clamp' or 'wrap/repeat'.Defaulting to clamp.");
+		Logger::Warn("Unsupported texture wrapping mode encountered. Valid modes are 'clamp' or 'wrap/repeat'. Defaulting to clamp.");
 		return "clamp";
 	}
 }
