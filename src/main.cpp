@@ -12,6 +12,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/Exporter.hpp>
 #include "logger.h"
+#include "version.h"
 
 #include <iostream>
 
@@ -22,11 +23,22 @@ int invalidUsageExit() {
 	return -1;
 }
 
+void printHeader() {
+	std::cout << " ______ assimp2xml3d v" << ASSIMP2XML3D_VERSION_MAJOR << "." << ASSIMP2XML3D_VERSION_MINOR;
+	std::cout << "  (using assimp v"
+		<< aiGetVersionMajor() << "."
+		<< aiGetVersionMinor() << "."
+		<< aiGetVersionRevision() << ") ______"
+		<< std::endl;
+}
+
 
 int main(int argc, char *argv[]) {
 	if (argc < 3) {
 		return invalidUsageExit();
 	}
+
+	printHeader();
 
 	int nextarg = 1;
 	while (nextarg < argc && argv[nextarg][0] == '-') {
@@ -58,5 +70,5 @@ int main(int argc, char *argv[]) {
 	exporter.RegisterExporter(Assimp2XML3D_desc);
 	exporter.Export(scene, "xml", output);
 
-	Logger::Info("Finished exporting to XML3D.");
+	Logger::Info("Finished exporting to XML3D, all systems nominal.");
 }

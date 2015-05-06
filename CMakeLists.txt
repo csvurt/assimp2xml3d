@@ -2,8 +2,13 @@ cmake_minimum_required (VERSION 2.6)
 project (assimp2xml3d)
 
 ########## Version number
-set(ASSIMP2XML3D_VERSION_MAJOR, 0)
-set(ASSIMP2XML3D_VERSION_MINOR, 1)
+set(ASSIMP2XML3D_VERSION_MAJOR 0)
+set(ASSIMP2XML3D_VERSION_MINOR 1)
+configure_file(
+	"${PROJECT_SOURCE_DIR}/src/version.h.in"
+	"${PROJECT_BINARY_DIR}/version.h"
+	)
+include_directories("${PROJECT_BINARY_DIR}/")
 
 ########## Set cmake variables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
