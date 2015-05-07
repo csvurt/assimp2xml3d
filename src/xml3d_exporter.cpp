@@ -38,12 +38,13 @@ XML3DExporter::~XML3DExporter() {
 }
 
 void XML3DExporter::Export() {
+	doc.InsertFirstChild(doc.NewDeclaration());
 	tinyxml2::XMLElement* xml3d = doc.NewElement("xml3d");
 	tinyxml2::XMLElement* defs = doc.NewElement("defs");
 	tinyxml2::XMLElement* asset = doc.NewElement("asset");
 	xml3d->InsertFirstChild(defs);
 	xml3d->LinkEndChild(asset);
-	doc.InsertFirstChild(xml3d);
+	doc.LinkEndChild(xml3d);
 
 	std::string id(filename);
 	id = id.substr(0, id.find_first_of('.'));
