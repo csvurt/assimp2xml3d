@@ -15,7 +15,7 @@ an XML3D scene. The ID fragment of the asset will match the output file name wit
 Each output file will contain a single ```<asset>```, nested ```<assets>``` are not supported.
 
 ### Build
-assimp2xml3d can be built using CMake. Before building for the first time the ```assimp``` and ```tinyxml2``` submodules should be
+assimp2xml3d is built using CMake. Before building for the first time the ```assimp``` and ```tinyxml2``` submodules should be
 updated using ```git submodule init && git submodule update```.
 
 The resulting project files will be generated in a new ```/assimp2xml3d``` subdirectory while the executables will be copied to ```/bin``` by default.
@@ -26,4 +26,5 @@ The resulting project files will be generated in a new ```/assimp2xml3d``` subdi
 $ assimp2xml3d [-v|--verbose] input_file output_file
 ```
 
-Both the input and output file names are required.
+Both the input and output file names are required. The tool will output warnings and errors by default, more info output can be toggled
+with the ```-v``` or ```--verbose``` flags.
