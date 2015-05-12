@@ -14,12 +14,12 @@ XML3DMaterialExporter::~XML3DMaterialExporter() {
 }
 
 tinyxml2::XMLElement* XML3DMaterialExporter::getMaterial() {
-	tinyxml2::XMLElement* material = xml3d->doc.NewElement("material");
+	tinyxml2::XMLElement* material = xml3d->doc.NewElement("shader");
 	aiString name;
 	aMat->Get(AI_MATKEY_NAME, name);
 	xml3d->stringToHTMLId(&name);
 	material->SetAttribute("id", name.C_Str());
-	material->SetAttribute("script", "urn:xml3d:material:phong"); //TODO: Choose right shading model
+	material->SetAttribute("script", "urn:xml3d:shader:phong"); //TODO: Choose right shading model
 
 	// For now we only handle properties that the default XML3D material shaders can work with
 	tinyxml2::XMLElement* diffuseColor = xml3d->doc.NewElement("float3");
