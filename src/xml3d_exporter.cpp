@@ -163,9 +163,9 @@ void XML3DExporter::stringToHTMLId(aiString* ai) {
 	if (!(str.length() > 0)) {
 		str = "_Generated_Name_" + boost::lexical_cast<std::string>(mChangedNamesCounter++);
 	}
-	if (str.find_first_of(' ') != std::string::npos) {
-		std::replace(str.begin(), str.end(), ' ', '_');
-	}
+
+	std::replace(str.begin(), str.end(), ' ', '_');
+
 	if (usedNames.count(str) > 0) {
 		str += "_" + boost::lexical_cast<std::string>(mChangedNamesCounter++);
 		Logger::Warn("Renamed '" + str.substr(0, str.find_last_of("_")) + "' to '" + str + "' to avoid duplicate IDs");

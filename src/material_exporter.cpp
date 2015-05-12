@@ -63,7 +63,6 @@ tinyxml2::XMLElement* XML3DMaterialExporter::getMaterial() {
 }
 
 void XML3DMaterialExporter::addTexturesToMaterial(tinyxml2::XMLElement* matElement) {
-	// XML3D only supports 1 texture per channel by default, so for now we limit the exporter to that
 	for (auto it = SupportedTextureTypes.begin(); it != SupportedTextureTypes.end(); ++it) {
 		if (aMat->GetTextureCount(it->first) > 0) {
 			tinyxml2::XMLElement* texElement = processTexture(it->first);
@@ -72,6 +71,7 @@ void XML3DMaterialExporter::addTexturesToMaterial(tinyxml2::XMLElement* matEleme
 				matElement->LinkEndChild(texElement);
 			}
 			if (aMat->GetTextureCount(it->first) > 1) {
+				// XML3D only supports 1 texture per channel by default, so for now we limit the exporter to that
 				Logger::Warn("Found multiple textures for channel " + std::string(it->second.c_str()) + ", only the first texture will be retained.");
 			}
 		}
