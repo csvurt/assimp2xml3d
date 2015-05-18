@@ -2,12 +2,6 @@
 
 #include "xml3d_exporter.h"
 
-static const std::unordered_map<aiTextureType, std::string> SupportedTextureTypes = {
-	{ aiTextureType_DIFFUSE, "diffuseTexture" },
-	{ aiTextureType_SPECULAR, "specularTexture" },
-	{ aiTextureType_EMISSIVE, "emissiveTexture" }
-};
-
 class XML3DMaterialExporter {
 
 public:

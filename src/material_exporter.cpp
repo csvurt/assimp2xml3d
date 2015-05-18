@@ -2,6 +2,12 @@
 #include "logger.h"
 #include <assimp/../../code/BoostWorkaround/boost/lexical_cast.hpp>
 
+static const std::unordered_map<aiTextureType, std::string> SupportedTextureTypes = {
+	{ aiTextureType_DIFFUSE, "diffuseTexture" },
+	{ aiTextureType_SPECULAR, "specularTexture" },
+	{ aiTextureType_EMISSIVE, "emissiveTexture" }
+};
+
 XML3DMaterialExporter::XML3DMaterialExporter(XML3DExporter* ex, aiMaterial* mat) :
 	xml3d(ex),
 	aMat(mat)
