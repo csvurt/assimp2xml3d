@@ -18,7 +18,7 @@ public:
 
 	void writeFile();
 	void Export();
-	void Export(tinyxml2::XMLElement* parent, aiNode* an, aiMatrix4x4* parentTransform);
+	void Export(tinyxml2::XMLElement* parent, aiNode* an, const aiMatrix4x4& parentTransform);
 
 	std::string toXml3dString(aiMatrix4x4* m);
 	std::string toXml3dString(aiVector3D* v, unsigned int len, bool toVec2 = false);

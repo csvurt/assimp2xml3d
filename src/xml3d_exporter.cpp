@@ -72,17 +72,17 @@ void XML3DExporter::Export() {
 	}
 
 	// Flatten scene hierarchy into a list of assetmeshes
-	Export(asset, scene->mRootNode, &aiMatrix4x4());
+	Export(asset, scene->mRootNode, aiMatrix4x4());
 
 	Logger::Info("Processed " + boost::lexical_cast<std::string>(mNumberOfMeshesExported) + " meshes and " +
 		boost::lexical_cast<std::string>(mNumberOfMaterialsExported) + " materials.");
 }
 
-void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiNode* an, aiMatrix4x4* parentTransform) {
+void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiNode* an, const aiMatrix4x4& parentTransform) {
 	// Flatten all non-mesh nodes while gathering the transformations 
 
 	aiMatrix4x4 t(an->mTransformation);
-	t = *parentTransform * t;
+	t = parentTransform * t;
 
 	for (unsigned int i = 0; i < an->mNumMeshes; i++) {
 		XML3DMeshExporter mexp(this, scene->mMeshes[an->mMeshes[i]]);
@@ -92,7 +92,7 @@ void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiNode* an, aiMatrix4x4
 	}
 
 	for (unsigned int i = 0; i < an->mNumChildren; i++) {
-		Export(parent, an->mChildren[i], &t);
+		Export(parent, an->mChildren[i], t);
 	}
 }
 
