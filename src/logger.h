@@ -4,7 +4,7 @@
 
 class Logger {
 public:
-	static enum Level { ERROR, WARN, INFO, DEBUG };
+	enum Level { ERROR, WARN, INFO, DEBUG };
 	static Level logLevel;
 
 	static void Info(std::string msg);

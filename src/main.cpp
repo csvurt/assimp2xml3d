@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 	int nextarg = 1;
 	while (nextarg < argc && argv[nextarg][0] == '-') {
 		if (!strcmp(argv[nextarg], "--verbose") || !strcmp(argv[nextarg], "-v")) {
-			Logger::logLevel = Logger::Level::INFO;
+			Logger::logLevel = Logger::INFO;
 		}
 		++nextarg;
 	}
