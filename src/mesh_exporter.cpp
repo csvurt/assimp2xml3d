@@ -18,7 +18,7 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetMesh(aiMatrix4x4* parentTransfo
 	mesh->SetAttribute("includes", aMesh->mName.C_Str());
 	mesh->SetAttribute("type", "triangles");
 	tmat->SetAttribute("name", "meshTransform");
-	tmat->SetText(xml3d->toXml3dString(parentTransform).c_str());
+	tmat->SetText(xml3d->toXml3dString(*parentTransform).c_str());
 
 	aiMaterial* mat = xml3d->scene->mMaterials[aMesh->mMaterialIndex];
 	aiString name;
@@ -35,7 +35,7 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetMesh(aiMatrix4x4* parentTransfo
 
 tinyxml2::XMLElement* XML3DMeshExporter::getAssetData() {
 	tinyxml2::XMLElement* data = xml3d->doc.NewElement("assetdata");
-	xml3d->stringToHTMLId(&aMesh->mName);
+	xml3d->stringToHTMLId(aMesh->mName);
 	data->SetAttribute("name", aMesh->mName.C_Str());
 
 	//Export indices

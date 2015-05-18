@@ -101,16 +101,16 @@ void XML3DExporter::writeFile() {
 	doc.SaveFile(filename);
 }
 
-std::string XML3DExporter::toXml3dString(aiMatrix4x4* m) {
+std::string XML3DExporter::toXml3dString(const aiMatrix4x4& m) {
 	std::stringstream ss;
-	ss  << m->a1 << ' ' << m->b1 << ' ' << m->c1 << ' ' << m->d1 << ' '
-		<< m->a2 << ' ' << m->b2 << ' ' << m->c2 << ' ' << m->d2 << ' '
-		<< m->a3 << ' ' << m->b3 << ' ' << m->c3 << ' ' << m->d3 << ' '
-		<< m->a4 << ' ' << m->b4 << ' ' << m->c4 << ' ' << m->d4 << ' ';
+	ss  << m.a1 << ' ' << m.b1 << ' ' << m.c1 << ' ' << m.d1 << ' '
+		<< m.a2 << ' ' << m.b2 << ' ' << m.c2 << ' ' << m.d2 << ' '
+		<< m.a3 << ' ' << m.b3 << ' ' << m.c3 << ' ' << m.d3 << ' '
+		<< m.a4 << ' ' << m.b4 << ' ' << m.c4 << ' ' << m.d4 << ' ';
 	std::string str = ss.str();
 	if (str.find("NAN") != std::string::npos) {
 		Logger::Warn("Invalid transformation matrix, replacing with Identity: [" + str + "]");
-		return toXml3dString(&aiMatrix4x4());
+		return toXml3dString(aiMatrix4x4());
 	}
 	return ss.str();
 }
@@ -156,9 +156,9 @@ std::string XML3DExporter::toXml3dString(aiFace* f, unsigned int numFaces) {
 	return ss.str();
 }
 
-void XML3DExporter::stringToHTMLId(aiString* ai) {
+void XML3DExporter::stringToHTMLId(aiString& ai) {
 	// Ensure the name is not empty and is safe to use as an HTML5 id string
-	std::string str(ai->C_Str());
+	std::string str(ai.C_Str());
 
 	if (!(str.length() > 0)) {
 		str = "_Generated_Name_" + boost::lexical_cast<std::string>(mChangedNamesCounter++);
@@ -172,7 +172,7 @@ void XML3DExporter::stringToHTMLId(aiString* ai) {
 	}
 	usedNames.emplace(str, 'x');
 
-	ai->Set(str);
+	ai.Set(str);
 }
 
 
