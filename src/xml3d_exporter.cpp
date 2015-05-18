@@ -2,7 +2,6 @@
 #include "mesh_exporter.h"
 #include "material_exporter.h"
 #include "logger.h"
-#include "mesh_splitter.h"
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -52,9 +51,6 @@ void XML3DExporter::Export() {
 	asset->SetAttribute("id", id.c_str());
 
 	if (scene->HasMeshes()) {
-		MeshSplitter splitter;
-		splitter.SetLimit(1 << 16);
-		splitter.Execute(scene);
 		for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
 			XML3DMeshExporter mexp(this, scene->mMeshes[i]);
 			tinyxml2::XMLElement* data = mexp.getAssetData();

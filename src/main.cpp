@@ -59,7 +59,8 @@ int main(int argc, char *argv[]) {
 	Assimp::Importer importer;
 	importer.SetPropertyBool(AI_CONFIG_PP_FD_REMOVE, true);
 	importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_POINT | aiPrimitiveType_LINE);
-	Logger::Info("Instructing assimp to remove degenerate triangles and ignore points/lines");
+	importer.SetPropertyInteger(AI_CONFIG_PP_SLM_VERTEX_LIMIT, 1<<16);
+	Logger::Info("Instructing assimp to remove degenerate triangles, ignore points/lines and split large meshes.");
 
 	const aiScene* const scene = importer.ReadFile(input, aiProcessPreset_TargetRealtime_MaxQuality);
 
