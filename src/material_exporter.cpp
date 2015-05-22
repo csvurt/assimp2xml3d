@@ -60,6 +60,9 @@ tinyxml2::XMLElement* XML3DMaterialExporter::getMaterial() {
 	opacity->SetAttribute("name", "transparency");
 	float o;
 	aMat->Get(AI_MATKEY_OPACITY, o);
+	if (o <= 0.0001f) {
+		Logger::Warn("Material with name '"+std::string(name.C_Str())+"' has an opacity value of 0. Meshes rendered with this material will be fully transparent!");
+	}
 	opacity->SetText(boost::lexical_cast<std::string>(1 - o).c_str());
 	material->LinkEndChild(opacity);
 
