@@ -27,7 +27,7 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetMesh(aiMatrix4x4* parentTransfo
 
 	std::string namestr("#");
 	namestr.append(name.C_Str());
-	mesh->SetAttribute("shader", namestr.c_str());
+	mesh->SetAttribute("material", namestr.c_str());
 
 	mesh->LinkEndChild(tmat);
 	return mesh;
