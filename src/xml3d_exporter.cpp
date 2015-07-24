@@ -50,6 +50,8 @@ void XML3DExporter::Export() {
 	id = id.substr(0, id.find_first_of('.'));
 	asset->SetAttribute("id", id.c_str());
 
+	removeDummyMaterial(scene);
+
 	if (scene->HasMeshes()) {
 		for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
 			XML3DMeshExporter mexp(this, scene->mMeshes[i]);
@@ -72,6 +74,20 @@ void XML3DExporter::Export() {
 
 	Logger::Info("Processed " + boost::lexical_cast<std::string>(mNumberOfMeshesExported) + " meshes and " +
 		boost::lexical_cast<std::string>(mNumberOfMaterialsExported) + " materials.");
+}
+
+// Assimp will always generate a material even if it was instructed to ignore materials during the import process.
+// To prevent this material from being exported when the --no-material flag was set we implicitly remove it from the scene 
+// by setting the material count to 0.
+void XML3DExporter::removeDummyMaterial(aiScene* scene) {
+	if (scene->mNumMaterials == 1) {
+		aiMaterial* mat = scene->mMaterials[0];
+		aiString name;
+		mat->Get(AI_MATKEY_NAME, name);
+		if (!strcmp(name.C_Str(), "Dummy_MaterialsRemoved")) {
+			scene->mNumMaterials = 0; //Will cause HasMaterials to return false from now on
+		}
+	}
 }
 
 void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiNode* an, const aiMatrix4x4& parentTransform) {

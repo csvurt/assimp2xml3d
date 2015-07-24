@@ -20,15 +20,16 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetMesh(aiMatrix4x4* parentTransfo
 	tmat->SetAttribute("name", "meshTransform");
 	tmat->SetText(xml3d->toXml3dString(*parentTransform).c_str());
 
-	aiMaterial* mat = xml3d->scene->mMaterials[aMesh->mMaterialIndex];
-	aiString name;
-	mat->Get(AI_MATKEY_NAME, name);
-	mat->AddProperty(&name, AI_MATKEY_NAME);
+	if (xml3d->scene->HasMaterials()) {
+		aiMaterial* mat = xml3d->scene->mMaterials[aMesh->mMaterialIndex];
+		aiString name;
+		mat->Get(AI_MATKEY_NAME, name);
+		mat->AddProperty(&name, AI_MATKEY_NAME);
 
-	std::string namestr("#");
-	namestr.append(name.C_Str());
-	mesh->SetAttribute("material", namestr.c_str());
-
+		std::string namestr("#");
+		namestr.append(name.C_Str());
+		mesh->SetAttribute("material", namestr.c_str());
+	}
 	mesh->LinkEndChild(tmat);
 	return mesh;
 }

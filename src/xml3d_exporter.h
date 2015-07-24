@@ -33,4 +33,6 @@ private:
 	unsigned int mNumberOfMeshesExported = 0;
 	unsigned int mNumberOfMaterialsExported = 0;
 
+	void removeDummyMaterial(aiScene* scene);
+
 };
