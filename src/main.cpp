@@ -27,7 +27,7 @@ struct Environment {
 };
 
 int invalidUsageExit() {
-	std::cout << "usage: assimp2xml3d [-v|--verbose] inputFile outputFile" << std::endl;
+	std::cout << "usage: assimp2xml3d [--verbose|--no-materials] inputFile outputFile" << std::endl;
 	return -1;
 }
 

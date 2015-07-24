@@ -28,13 +28,21 @@ The resulting project files will be generated in a new ```/assimp2xml3d``` subdi
 ### Usage
 
 ```bash
-$ assimp2xml3d [-v|--verbose] input_file output_file
+$ assimp2xml3d [--verbose|--no-materials] input_file output_file
 ```
 
 Both the input and output file names are required. The tool will output warnings and errors by default, more info output can be toggled
-with the ```-v``` or ```--verbose``` flags.
+with the ```-v``` or ```--verbose``` flags. 
+
+Use the ```--no-materials``` or ```-m``` flag to export the model without materials. Even if the input file has no materials the tool will generate a 
+default material unless this flag is set. 
 
 ### Changelog
+
+TBD - v0.2
+
+* Move to XML3D 5.0, XML3D 4.x is no longer supported
+* Added a --no-materials flag
 
 28.07.2015 - v0.1.1
 
