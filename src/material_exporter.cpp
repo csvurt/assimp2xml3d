@@ -31,35 +31,45 @@ tinyxml2::XMLElement* XML3DMaterialExporter::getMaterial() {
 	tinyxml2::XMLElement* diffuseColor = xml3d->doc.NewElement("float3");
 	diffuseColor->SetAttribute("name", "diffuseColor");
 	aiColor4D dColor;
-	aMat->Get(AI_MATKEY_COLOR_DIFFUSE, dColor);
+	if (AI_SUCCESS != aMat->Get(AI_MATKEY_COLOR_DIFFUSE, dColor)) {
+		dColor = aiColor4D(1.f, 1.f, 1.f, 1.f);
+	}
 	diffuseColor->SetText(xml3d->toXml3dString(&dColor, 1, true).c_str());
 	material->LinkEndChild(diffuseColor);
 
 	tinyxml2::XMLElement* specularColor = xml3d->doc.NewElement("float3");
 	specularColor->SetAttribute("name", "specularColor");
 	aiColor4D sColor;
-	aMat->Get(AI_MATKEY_COLOR_SPECULAR, sColor);
+	if (AI_SUCCESS != aMat->Get(AI_MATKEY_COLOR_SPECULAR, sColor)) {
+		sColor = aiColor4D(1.f, 1.f, 1.f, 1.f);
+	}
 	specularColor->SetText(xml3d->toXml3dString(&sColor, 1, true).c_str());
 	material->LinkEndChild(specularColor);
 
 	tinyxml2::XMLElement* emissiveColor = xml3d->doc.NewElement("float3");
 	emissiveColor->SetAttribute("name", "emissiveColor");
 	aiColor4D eColor;
-	aMat->Get(AI_MATKEY_COLOR_EMISSIVE, eColor);
+	if (AI_SUCCESS != aMat->Get(AI_MATKEY_COLOR_EMISSIVE, eColor)) {
+		eColor = aiColor4D(0.f, 0.f, 0.f, 1.f);
+	}
 	emissiveColor->SetText(xml3d->toXml3dString(&eColor, 1, true).c_str());
 	material->LinkEndChild(emissiveColor);
 
 	tinyxml2::XMLElement* shininess = xml3d->doc.NewElement("float");
 	shininess->SetAttribute("name", "shininess");
 	float s;
-	aMat->Get(AI_MATKEY_SHININESS, s);
+	if (AI_SUCCESS != aMat->Get(AI_MATKEY_SHININESS, s)) {
+		s = 0.5f;
+	}
 	shininess->SetText(boost::lexical_cast<std::string>(s).c_str());
 	material->LinkEndChild(shininess);
 
 	tinyxml2::XMLElement* opacity = xml3d->doc.NewElement("float");
 	opacity->SetAttribute("name", "transparency");
 	float o;
-	aMat->Get(AI_MATKEY_OPACITY, o);
+	if (AI_SUCCESS != aMat->Get(AI_MATKEY_OPACITY, o)) {
+		o = 1.f;
+	}
 	if (o <= 0.0001f) {
 		Logger::Warn("Material with name '"+std::string(name.C_Str())+"' has an opacity value of 0. Meshes rendered with this material will be fully transparent!");
 	}
