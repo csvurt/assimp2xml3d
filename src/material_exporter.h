@@ -17,4 +17,11 @@ private:
 	void addTexturesToMaterial(tinyxml2::XMLElement* matElement);
 	tinyxml2::XMLElement* processTexture(aiTextureType texType);
 	std::string mapModeToString(int mode);
+
+	void processDiffuseColor(tinyxml2::XMLElement* matElement);
+	void processSpecularColor(tinyxml2::XMLElement* matElement);
+	void processEmissiveColor(tinyxml2::XMLElement* matElement);
+	void processShininess(tinyxml2::XMLElement* matElement);
+	void processOpacity(tinyxml2::XMLElement* matElement, aiString& materialName);
+
 };
