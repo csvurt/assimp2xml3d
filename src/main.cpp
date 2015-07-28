@@ -24,7 +24,7 @@ int invalidUsageExit() {
 }
 
 void printHeader() {
-	std::cout << " ______ assimp2xml3d v" << ASSIMP2XML3D_VERSION_MAJOR << "." << ASSIMP2XML3D_VERSION_MINOR;
+	std::cout << " ______ assimp2xml3d v" << ASSIMP2XML3D_VERSION_MAJOR << "." << ASSIMP2XML3D_VERSION_MINOR << "." << ASSIMP2XML3D_VERSION_PATCH;
 	std::cout << "  (using assimp v"
 		<< aiGetVersionMajor() << "."
 		<< aiGetVersionMinor() << "."
