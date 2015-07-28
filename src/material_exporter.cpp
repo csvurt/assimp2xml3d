@@ -129,8 +129,10 @@ tinyxml2::XMLElement* XML3DMaterialExporter::processTexture(aiTextureType texTyp
 	}
 
 	tinyxml2::XMLElement* texElement = xml3d->doc.NewElement("texture");
-	texElement->SetAttribute("wraps", mapModeToString(wrapS).c_str());
-	texElement->SetAttribute("wrapt", mapModeToString(wrapT).c_str());
+	std::stringstream ss;
+	ss << mapModeToString(wrapS) << " ";
+	ss << mapModeToString(wrapT);
+	texElement->SetAttribute("wrap", ss.str().c_str());
 	tinyxml2::XMLElement* imgElement = xml3d->doc.NewElement("img");
 	imgElement->SetAttribute("src", texPath.C_Str());
 	texElement->LinkEndChild(imgElement);
