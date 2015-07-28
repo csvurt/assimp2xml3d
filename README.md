@@ -36,6 +36,10 @@ with the ```-v``` or ```--verbose``` flags.
 
 ### Changelog
 
+28.07.2015 - v0.1.1
+
+* Fixed issues: [#2](https://github.com/csvurt/assimp2xml3d/issues/2)
+
 12.05.2015 - v0.1
 
 * Initial release
