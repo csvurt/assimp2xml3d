@@ -13,13 +13,8 @@ XML3DMeshExporter::~XML3DMeshExporter() {
 
 tinyxml2::XMLElement* XML3DMeshExporter::getAssetMesh(aiMatrix4x4* parentTransform) {
 	tinyxml2::XMLElement* mesh = xml3d->doc.NewElement("assetmesh");
-	tinyxml2::XMLElement* tmat = xml3d->doc.NewElement("float4x4");
 
 	mesh->SetAttribute("includes", aMesh->mName.C_Str());
-	mesh->SetAttribute("type", "triangles");
-	tmat->SetAttribute("name", "meshTransform");
-	tmat->SetText(xml3d->toXml3dString(*parentTransform).c_str());
-
 	if (xml3d->scene->HasMaterials()) {
 		aiMaterial* mat = xml3d->scene->mMaterials[aMesh->mMaterialIndex];
 		aiString name;
@@ -30,7 +25,8 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetMesh(aiMatrix4x4* parentTransfo
 		namestr.append(name.C_Str());
 		mesh->SetAttribute("material", namestr.c_str());
 	}
-	mesh->LinkEndChild(tmat);
+	mesh->SetAttribute("style", xml3d->toXml3dString(*parentTransform).c_str());
+	mesh->SetAttribute("type", "triangles");
 	return mesh;
 }
 

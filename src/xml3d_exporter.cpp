@@ -4,6 +4,7 @@
 #include "logger.h"
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 #include <algorithm>
 #include <assimp/../../code/BoostWorkaround/boost/lexical_cast.hpp>
 
@@ -115,13 +116,15 @@ void XML3DExporter::writeFile() {
 
 std::string XML3DExporter::toXml3dString(const aiMatrix4x4& m) {
 	std::stringstream ss;
-	ss  << m.a1 << ' ' << m.b1 << ' ' << m.c1 << ' ' << m.d1 << ' '
-		<< m.a2 << ' ' << m.b2 << ' ' << m.c2 << ' ' << m.d2 << ' '
-		<< m.a3 << ' ' << m.b3 << ' ' << m.c3 << ' ' << m.d3 << ' '
-		<< m.a4 << ' ' << m.b4 << ' ' << m.c4 << ' ' << m.d4 << ' ';
+	ss << "transform: matrix3d(";
+	ss << std::setprecision(4)
+	    << m.a1 << ", " << m.b1 << ", " << m.c1 << ", " << m.d1 << ", "
+		<< m.a2 << ", " << m.b2 << ", " << m.c2 << ", " << m.d2 << ", "
+		<< m.a3 << ", " << m.b3 << ", " << m.c3 << ", " << m.d3 << ", "
+		<< m.a4 << ", " << m.b4 << ", " << m.c4 << ", " << m.d4 << ");";
 	std::string str = ss.str();
-	if (str.find("NAN") != std::string::npos) {
-		Logger::Warn("Invalid transformation matrix, replacing with Identity: [" + str + "]");
+	if (str.find("#Q") != std::string::npos) {
+		Logger::Warn("Invalid transformation matrix '" + str + "', replacing with Identity.");
 		return toXml3dString(aiMatrix4x4());
 	}
 	return ss.str();
