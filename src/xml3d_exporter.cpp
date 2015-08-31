@@ -57,7 +57,7 @@ void XML3DExporter::Export() {
 		for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
 			XML3DMeshExporter mexp(this, scene->mMeshes[i]);
 			tinyxml2::XMLElement* data = mexp.getAssetData();
-			asset->InsertFirstChild(data);
+			asset->LinkEndChild(data);
 		}
 	}
 
