@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iomanip>
 
+static const float EPSILON = 0.00001f;
 
 std::string XML3DDataConverter::toXml3dString(const aiMatrix4x4& m) {
 	std::stringstream ss;
@@ -53,36 +54,64 @@ std::string XML3DDataConverter::toXml3dString(aiColor4D* v, unsigned int numVert
 	return ss.str();
 }
 
-std::string XML3DDataConverter::toXml3dString(std::vector<float>* v, unsigned int numEntries) {
+
+
+std::string XML3DDataConverter::toXml3dString(std::vector<float>* v) {
 	std::stringstream ss;
 
-	for (unsigned int i = 0; i < numEntries; i++) {
-		ss << v->at(i) << ' ';
+	for (auto it = v->begin(); it != v->end(); it++) {
+		ss << *it << ' ';
 	}
 
 	return ss.str();
 }
 
-std::string XML3DDataConverter::toXml3dString(std::vector<unsigned int>* v, unsigned int numEntries) {
+std::string XML3DDataConverter::toXml3dString(std::vector<unsigned int>* v) {
 	std::stringstream ss;
 
-	for (unsigned int i = 0; i < numEntries; i++) {
-		ss << v->at(i) << ' ';
+	for (auto it = v->begin(); it != v->end(); it++) {
+		ss << *it << ' ';
 	}
 
 	return ss.str();
 }
 
-std::string XML3DDataConverter::toXml3dString(std::vector<aiMatrix4x4>* v, unsigned int numEntries) {
+std::string XML3DDataConverter::toXml3dString(std::vector<aiVector3D*>* v) {
+	std::stringstream ss;
+	ss << std::setprecision(5);
+
+	for (auto it = v->begin(); it != v->end(); it++) {
+		ss << clampZero((*it)->x) << ' ' << clampZero((*it)->y) << ' ' << clampZero((*it)->z) << ' ';
+	}
+
+	return ss.str();
+}
+
+std::string XML3DDataConverter::toXml3dString(std::vector<aiQuaternion*>* v) {
+	std::stringstream ss;
+	ss << std::setprecision(5);
+
+	for (auto it = v->begin(); it != v->end(); it++) {
+		ss << clampZero((*it)->x) << ' ' << clampZero((*it)->y) << ' ' << clampZero((*it)->z) << ' ' << clampZero((*it)->w) << ' ';
+	}
+
+	return ss.str();
+}
+
+float XML3DDataConverter::clampZero(float v) {
+	return abs(v) < EPSILON ? 0.f : v;
+}
+
+std::string XML3DDataConverter::toXml3dString(std::vector<aiMatrix4x4>* v) {
 	std::stringstream ss;
 
-	for (unsigned int i = 0; i < numEntries; i++) {
-		aiMatrix4x4 m = v->at(i);
-		ss << std::setprecision(4)
-			<< m.a1 << " " << m.b1 << " " << m.c1 << " " << m.d1 << " "
-			<< m.a2 << " " << m.b2 << " " << m.c2 << " " << m.d2 << " "
-			<< m.a3 << " " << m.b3 << " " << m.c3 << " " << m.d3 << " "
-			<< m.a4 << " " << m.b4 << " " << m.c4 << " " << m.d4;
+	for (auto it = v->begin(); it != v->end(); it++) {
+		aiMatrix4x4 m = *it;
+		ss << std::setprecision(5)
+			<< clampZero(m.a1) << " " << clampZero(m.b1) << " " << clampZero(m.c1) << " " << clampZero(m.d1) << " "
+			<< clampZero(m.a2) << " " << clampZero(m.b2) << " " << clampZero(m.c2) << " " << clampZero(m.d2) << " "
+			<< clampZero(m.a3) << " " << clampZero(m.b3) << " " << clampZero(m.c3) << " " << clampZero(m.d3) << " "
+			<< clampZero(m.a4) << " " << clampZero(m.b4) << " " << clampZero(m.c4) << " " << clampZero(m.d4);
 	}
 
 	return ss.str();
