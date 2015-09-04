@@ -22,7 +22,7 @@ struct Environment {
 	Logger::Level	logLevel = Logger::WARN;
 	std::string		inputFile = "";
 	std::string		outputFile = "";
-	unsigned int	importFlags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_RemoveComponent;
+	unsigned int	importFlags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_RemoveComponent | aiProcess_SortByPType;
 	unsigned int	ignoreComponents = aiComponent_LIGHTS | aiComponent_CAMERAS;
 };
 
