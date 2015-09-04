@@ -111,7 +111,7 @@ std::string XML3DDataConverter::toXml3dString(std::vector<aiMatrix4x4>* v) {
 			<< clampZero(m.a1) << " " << clampZero(m.b1) << " " << clampZero(m.c1) << " " << clampZero(m.d1) << " "
 			<< clampZero(m.a2) << " " << clampZero(m.b2) << " " << clampZero(m.c2) << " " << clampZero(m.d2) << " "
 			<< clampZero(m.a3) << " " << clampZero(m.b3) << " " << clampZero(m.c3) << " " << clampZero(m.d3) << " "
-			<< clampZero(m.a4) << " " << clampZero(m.b4) << " " << clampZero(m.c4) << " " << clampZero(m.d4);
+			<< clampZero(m.a4) << " " << clampZero(m.b4) << " " << clampZero(m.c4) << " " << clampZero(m.d4) << " ";
 	}
 
 	return ss.str();
