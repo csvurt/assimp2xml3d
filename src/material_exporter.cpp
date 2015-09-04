@@ -26,7 +26,7 @@ tinyxml2::XMLElement* XML3DMaterialExporter::getMaterial() {
 	aMat->Get(AI_MATKEY_NAME, name);
 	xml3d->stringToHTMLId(name);
 	material->SetAttribute("id", name.C_Str());
-	material->SetAttribute("script", "urn:xml3d:material:phong"); //TODO: Choose right shading model
+	material->SetAttribute("model", "urn:xml3d:material:phong"); //TODO: Choose right shading model
 
 	// For now we only handle properties that the default XML3D material shaders can work with
 	processDiffuseColor(material);
