@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <assimp/../../code/BoostWorkaround/boost/lexical_cast.hpp>
+#include "animation/skeleton.h"
 
 namespace {
 	void ExportScene(const char*, Assimp::IOSystem*, const aiScene*, const Assimp::ExportProperties*);
@@ -76,7 +77,7 @@ void XML3DExporter::Export() {
 		}
 	}
 
-	// Flatten scene hierarchy into a list of assetmeshes
+	// Flatten scene hierarchy into a list of assetmeshes and create animation skeletons
 	Export(asset, scene->mRootNode, aiMatrix4x4());
 
 	Logger::Info("Processed " + boost::lexical_cast<std::string>(mNumberOfMeshesExported) + " meshes and " +
@@ -110,8 +111,16 @@ void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiNode* an, const aiMat
 		mNumberOfMeshesExported++;
 	}
 
-	for (unsigned int i = 0; i < an->mNumChildren; i++) {
-		Export(parent, an->mChildren[i], t);
+	std::string nodeName(an->mName.C_Str());
+	if (isKnownBone(nodeName)) {
+		// This is the root node of a skeleton, we let the XML3DSkeleton exporter process the subtree
+		XML3DSkeleton skeleton(this, an);
+		skeleton.createDebugOutput(parent);
+	}
+	else {
+		for (unsigned int i = 0; i < an->mNumChildren; i++) {
+			Export(parent, an->mChildren[i], t);
+		}
 	}
 }
 
@@ -140,4 +149,12 @@ void XML3DExporter::stringToHTMLId(aiString& ai) {
 	ai.Set(str);
 }
 
+void XML3DExporter::discoverBone(std::string& name) {
+	mDiscoveredBoneNames.insert(name);
+}
+
+bool XML3DExporter::isKnownBone(std::string& name) {
+	auto it = mDiscoveredBoneNames.find(name);
+	return it != mDiscoveredBoneNames.end();
+}
 

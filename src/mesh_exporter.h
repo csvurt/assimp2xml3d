@@ -14,4 +14,6 @@ public:
 private:
 	XML3DExporter* xml3d;
 	aiMesh* aMesh;
+
+	void discoverBones();
 };

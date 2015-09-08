@@ -74,6 +74,15 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetData() {
 		data->LinkEndChild(color);
 	}
 
+	//Register bone names with the XML3DExporter, they'll have to be processed separately later
+	if (aMesh->HasBones()) {
+		for (unsigned int i = 0; i < aMesh->mNumBones; i++) {
+			std::string name(aMesh->mBones[i]->mName.C_Str());
+			xml3d->discoverBone(name);
+		}
+	}
+
 	return data;
 }
+
 

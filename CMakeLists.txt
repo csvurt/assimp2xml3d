@@ -26,6 +26,8 @@ SET( HEADER_FILES
 	src/mesh_exporter.h
 	src/logger.h
 	src/data_converter.h
+	src/animation/skeleton.h
+	src/animation/bone.h
 )
 
 SET( CLASS_FILES
@@ -35,6 +37,8 @@ SET( CLASS_FILES
 	src/mesh_exporter.cpp
 	src/logger.cpp
 	src/data_converter.cpp
+	src/animation/skeleton.cpp
+	src/animation/bone.cpp
 )
 
 ########## Set Assimp variables
