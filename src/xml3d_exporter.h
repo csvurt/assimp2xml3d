@@ -10,6 +10,7 @@
 #include "tinyxml2.h"
 
 class XML3DMeshExporter;
+class XML3DSkeleton;
 
 class XML3DExporter {
 public:
@@ -21,7 +22,8 @@ public:
 
 	void writeFile();
 	void Export();
-	void Export(tinyxml2::XMLElement* parent, aiNode* an, const aiMatrix4x4& parentTransform);
+	void processSceneTree(tinyxml2::XMLElement* parent, aiNode* an, const aiMatrix4x4& parentTransform);
+	void processAnimationData(tinyxml2::XMLElement* asset);
 
 	void stringToHTMLId(aiString& str);
 	void discoverBone(std::string& name);
@@ -32,6 +34,7 @@ private:
 	unsigned int mChangedNamesCounter = 0;
 	std::unordered_map<std::string, char> usedNames;
 	std::vector<XML3DMeshExporter> mMeshExporters;
+	std::vector<XML3DSkeleton> mSkeletons;
 	std::set<std::string> mDiscoveredBoneNames;
 
 	void removeDummyMaterial(aiScene* scene);

@@ -66,7 +66,7 @@ std::string XML3DDataConverter::toXml3dString(std::vector<float>* v) {
 	return ss.str();
 }
 
-std::string XML3DDataConverter::toXml3dString(std::vector<unsigned int>* v) {
+std::string XML3DDataConverter::toXml3dString(std::vector<int>* v) {
 	std::stringstream ss;
 
 	for (auto it = v->begin(); it != v->end(); it++) {

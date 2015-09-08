@@ -33,6 +33,7 @@ XML3DExporter::XML3DExporter(const aiScene* ai, const char* file) {
 	aiCopyScene(ai, &scene);
 	filename = file;
 	mMeshExporters = std::vector<XML3DMeshExporter>(0);
+	mSkeletons = std::vector<XML3DSkeleton>(0);
 }
 
 XML3DExporter::~XML3DExporter() {
@@ -81,7 +82,9 @@ void XML3DExporter::Export() {
 	}
 
 	// Flatten scene hierarchy into a list of assetmeshes and create animation skeletons
-	Export(asset, scene->mRootNode, aiMatrix4x4());
+	processSceneTree(asset, scene->mRootNode, aiMatrix4x4());
+
+	processAnimationData(asset);
 
 	Logger::Info("Processed " + boost::lexical_cast<std::string>(scene->mNumMeshes) + " meshes and " +
 		boost::lexical_cast<std::string>(scene->mNumMaterials) + " materials.");
@@ -101,7 +104,7 @@ void XML3DExporter::removeDummyMaterial(aiScene* scene) {
 	}
 }
 
-void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiNode* an, const aiMatrix4x4& parentTransform) {
+void XML3DExporter::processSceneTree(tinyxml2::XMLElement* parent, aiNode* an, const aiMatrix4x4& parentTransform) {
 	// Flatten all non-mesh nodes while gathering the transformations 
 
 	aiMatrix4x4 t(an->mTransformation);
@@ -116,13 +119,23 @@ void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiNode* an, const aiMat
 	std::string nodeName(an->mName.C_Str());
 	if (isKnownBone(nodeName)) {
 		// This is the root node of a skeleton, we let the XML3DSkeleton exporter process the subtree
-		XML3DSkeleton skeleton(this, an);
-		skeleton.createDebugOutput(parent);
+		mSkeletons.emplace_back(this, an);
+		XML3DSkeleton* skeleton = &mSkeletons.back();
+		skeleton->createDebugOutput(parent);
 	}
 	else {
 		for (unsigned int i = 0; i < an->mNumChildren; i++) {
-			Export(parent, an->mChildren[i], t);
+			processSceneTree(parent, an->mChildren[i], t);
 		}
+	}
+}
+
+void XML3DExporter::processAnimationData(tinyxml2::XMLElement* asset) {
+	auto it = mSkeletons.begin();
+	while (it != mSkeletons.end()) {
+		tinyxml2::XMLElement* skeletonData = it->getBoneData();
+		asset->LinkEndChild(skeletonData);
+		it++;
 	}
 }
 
