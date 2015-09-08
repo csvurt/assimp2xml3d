@@ -8,7 +8,8 @@ class XML3DBone {
 public:
 	XML3DBone* mParent;
 	aiNode* mSceneNode;
-	aiMatrix4x4* mTransformation;
+	aiMatrix4x4 mLocalTransformation;
+	aiMatrix4x4 mGlobalTransformation;
 	std::vector<XML3DBone> mChildren;
 
 	XML3DBone();

@@ -15,7 +15,14 @@ XML3DSkeleton::~XML3DSkeleton() {
 
 void XML3DSkeleton::createBoneStructureRecursive(XML3DBone* currentBone, aiNode* currentBoneNode) {
 	currentBone->mSceneNode = currentBoneNode;
-	currentBone->mTransformation = &currentBoneNode->mTransformation;
+	currentBone->mLocalTransformation = currentBoneNode->mTransformation; 
+
+	if (currentBone->mParent != NULL) {
+		currentBone->mGlobalTransformation = currentBone->mParent->mGlobalTransformation * currentBoneNode->mTransformation;
+	}
+	else {
+		currentBone->mGlobalTransformation = currentBoneNode->mTransformation;
+	}
 
 	for (unsigned int i = 0; i < currentBoneNode->mNumChildren; i++) {
 		XML3DBone* childBone = currentBone->newChild();
