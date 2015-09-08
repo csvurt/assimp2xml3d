@@ -1,5 +1,6 @@
 #include "material_exporter.h"
 #include "logger.h"
+#include "data_converter.h"
 #include <assimp/../../code/BoostWorkaround/boost/lexical_cast.hpp>
 
 static const std::map<aiTextureType, std::string> SupportedTextureTypes = {
@@ -45,7 +46,7 @@ void XML3DMaterialExporter::processDiffuseColor(tinyxml2::XMLElement* matElement
 	}
 	tinyxml2::XMLElement* diffuseColor = xml3d->doc.NewElement("float3");
 	diffuseColor->SetAttribute("name", "diffuseColor");
-	diffuseColor->SetText(xml3d->toXml3dString(&dColor, 1, true).c_str());
+	diffuseColor->SetText(XML3DDataConverter::toXml3dString(&dColor, 1, true).c_str());
 	matElement->LinkEndChild(diffuseColor);
 }
 
@@ -56,7 +57,7 @@ void XML3DMaterialExporter::processSpecularColor(tinyxml2::XMLElement* matElemen
 	}
 	tinyxml2::XMLElement* specularColor = xml3d->doc.NewElement("float3");
 	specularColor->SetAttribute("name", "specularColor");
-	specularColor->SetText(xml3d->toXml3dString(&sColor, 1, true).c_str());
+	specularColor->SetText(XML3DDataConverter::toXml3dString(&sColor, 1, true).c_str());
 	matElement->LinkEndChild(specularColor);
 }
 
@@ -67,7 +68,7 @@ void XML3DMaterialExporter::processEmissiveColor(tinyxml2::XMLElement* matElemen
 	}
 	tinyxml2::XMLElement* emissiveColor = xml3d->doc.NewElement("float3");
 	emissiveColor->SetAttribute("name", "emissiveColor");
-	emissiveColor->SetText(xml3d->toXml3dString(&eColor, 1, true).c_str());
+	emissiveColor->SetText(XML3DDataConverter::toXml3dString(&eColor, 1, true).c_str());
 	matElement->LinkEndChild(emissiveColor);
 }
 

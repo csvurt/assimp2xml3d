@@ -25,6 +25,7 @@ SET( HEADER_FILES
 	src/material_exporter.h
 	src/mesh_exporter.h
 	src/logger.h
+	src/data_converter.h
 )
 
 SET( CLASS_FILES
@@ -33,6 +34,7 @@ SET( CLASS_FILES
 	src/material_exporter.cpp
 	src/mesh_exporter.cpp
 	src/logger.cpp
+	src/data_converter.cpp
 )
 
 ########## Set Assimp variables
