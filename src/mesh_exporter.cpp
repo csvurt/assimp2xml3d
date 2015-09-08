@@ -1,6 +1,8 @@
 #include "mesh_exporter.h"
 #include "data_converter.h"
 
+XML3DMeshExporter::XML3DMeshExporter(){};
+
 XML3DMeshExporter::XML3DMeshExporter(XML3DExporter* ex, aiMesh* mesh) : 
 	xml3d(ex),
 	aMesh(mesh)
@@ -32,28 +34,28 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetMesh(aiMatrix4x4* parentTransfo
 }
 
 tinyxml2::XMLElement* XML3DMeshExporter::getAssetData() {
-	tinyxml2::XMLElement* data = xml3d->doc.NewElement("assetdata");
+	mDataElement = xml3d->doc.NewElement("assetdata");
 	xml3d->stringToHTMLId(aMesh->mName);
-	data->SetAttribute("name", aMesh->mName.C_Str());
+	mDataElement->SetAttribute("name", aMesh->mName.C_Str());
 
 	//Export indices
 	tinyxml2::XMLElement* index = xml3d->doc.NewElement("int");
 	index->SetAttribute("name", "index");
 	index->SetText(XML3DDataConverter::toXml3dString(aMesh->mFaces, aMesh->mNumFaces).c_str());
-	data->LinkEndChild(index);
+	mDataElement->LinkEndChild(index);
 
 	//Export positions
 	tinyxml2::XMLElement* pos = xml3d->doc.NewElement("float3");
 	pos->SetAttribute("name", "position");
 	pos->SetText(XML3DDataConverter::toXml3dString(aMesh->mVertices, aMesh->mNumVertices).c_str());
-	data->LinkEndChild(pos);
+	mDataElement->LinkEndChild(pos);
 
 	//Export normals
 	if (aMesh->HasNormals()) {
 		tinyxml2::XMLElement* norm = xml3d->doc.NewElement("float3");
 		norm->SetAttribute("name", "normal");
 		norm->SetText(XML3DDataConverter::toXml3dString(aMesh->mNormals, aMesh->mNumVertices).c_str());
-		data->LinkEndChild(norm);
+		mDataElement->LinkEndChild(norm);
 	}
 
 	//Export texcoords
@@ -62,7 +64,7 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetData() {
 		tc->SetAttribute("name", "texcoord");
 		// TODO: UV channel selection
 		tc->SetText(XML3DDataConverter::toXml3dString(aMesh->mTextureCoords[0], aMesh->mNumVertices, true).c_str());
-		data->LinkEndChild(tc);
+		mDataElement->LinkEndChild(tc);
 	}
 
 	//Export colors
@@ -71,7 +73,7 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetData() {
 		color->SetAttribute("name", "color");
 		// TODO: Color channel selection
 		color->SetText(XML3DDataConverter::toXml3dString(aMesh->mColors[0], aMesh->mNumVertices, true).c_str());
-		data->LinkEndChild(color);
+		mDataElement->LinkEndChild(color);
 	}
 
 	//Register bone names with the XML3DExporter, they'll have to be processed separately later
@@ -82,7 +84,7 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetData() {
 		}
 	}
 
-	return data;
+	return mDataElement;
 }
 
 

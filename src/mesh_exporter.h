@@ -5,6 +5,7 @@
 class XML3DMeshExporter {
 
 public:
+	XML3DMeshExporter();
 	XML3DMeshExporter(XML3DExporter* ex, aiMesh* mesh);
 	~XML3DMeshExporter();
 
@@ -14,6 +15,7 @@ public:
 private:
 	XML3DExporter* xml3d;
 	aiMesh* aMesh;
+	tinyxml2::XMLElement* mDataElement;
 
 	void discoverBones();
 };

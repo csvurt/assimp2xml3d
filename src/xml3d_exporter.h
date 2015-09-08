@@ -9,6 +9,8 @@
 #include <set>
 #include "tinyxml2.h"
 
+class XML3DMeshExporter;
+
 class XML3DExporter {
 public:
 	XML3DExporter(const aiScene* scene, const char* filename);
@@ -29,8 +31,7 @@ private:
 	const char* filename;
 	unsigned int mChangedNamesCounter = 0;
 	std::unordered_map<std::string, char> usedNames;
-	unsigned int mNumberOfMeshesExported = 0;
-	unsigned int mNumberOfMaterialsExported = 0;
+	std::vector<XML3DMeshExporter> mMeshExporters;
 	std::set<std::string> mDiscoveredBoneNames;
 
 	void removeDummyMaterial(aiScene* scene);

@@ -32,6 +32,7 @@ namespace {
 XML3DExporter::XML3DExporter(const aiScene* ai, const char* file) {
 	aiCopyScene(ai, &scene);
 	filename = file;
+	mMeshExporters = std::vector<XML3DMeshExporter>(0);
 }
 
 XML3DExporter::~XML3DExporter() {
@@ -61,9 +62,12 @@ void XML3DExporter::Export() {
 	removeDummyMaterial(scene);
 
 	if (scene->HasMeshes()) {
+		// Mesh exporters are stored because they're needed later to export <assetmesh> elements and bone data if available
+		mMeshExporters.reserve(scene->mNumMeshes);
 		for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
-			XML3DMeshExporter mexp(this, scene->mMeshes[i]);
-			tinyxml2::XMLElement* data = mexp.getAssetData();
+			mMeshExporters.emplace_back(this, scene->mMeshes[i]);
+			XML3DMeshExporter* mexp = &mMeshExporters.back();
+			tinyxml2::XMLElement* data = mexp->getAssetData();
 			asset->LinkEndChild(data);
 		}
 	}
@@ -73,15 +77,14 @@ void XML3DExporter::Export() {
 			XML3DMaterialExporter matExp(this, scene->mMaterials[i]);
 			tinyxml2::XMLElement* material = matExp.getMaterial();
 			defs->LinkEndChild(material);
-			mNumberOfMaterialsExported++;
 		}
 	}
 
 	// Flatten scene hierarchy into a list of assetmeshes and create animation skeletons
 	Export(asset, scene->mRootNode, aiMatrix4x4());
 
-	Logger::Info("Processed " + boost::lexical_cast<std::string>(mNumberOfMeshesExported) + " meshes and " +
-		boost::lexical_cast<std::string>(mNumberOfMaterialsExported) + " materials.");
+	Logger::Info("Processed " + boost::lexical_cast<std::string>(scene->mNumMeshes) + " meshes and " +
+		boost::lexical_cast<std::string>(scene->mNumMaterials) + " materials.");
 }
 
 // Assimp will always generate a material even if it was instructed to ignore materials during the import process.
@@ -105,10 +108,9 @@ void XML3DExporter::Export(tinyxml2::XMLElement* parent, aiNode* an, const aiMat
 	t = parentTransform * t;
 
 	for (unsigned int i = 0; i < an->mNumMeshes; i++) {
-		XML3DMeshExporter mexp(this, scene->mMeshes[an->mMeshes[i]]);
-		tinyxml2::XMLElement* mesh = mexp.getAssetMesh(&t);
+		XML3DMeshExporter* mexp = &mMeshExporters.at(an->mMeshes[i]);
+		tinyxml2::XMLElement* mesh = mexp->getAssetMesh(&t);
 		parent->LinkEndChild(mesh);
-		mNumberOfMeshesExported++;
 	}
 
 	std::string nodeName(an->mName.C_Str());
@@ -157,4 +159,3 @@ bool XML3DExporter::isKnownBone(std::string& name) {
 	auto it = mDiscoveredBoneNames.find(name);
 	return it != mDiscoveredBoneNames.end();
 }
-

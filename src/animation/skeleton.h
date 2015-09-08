@@ -17,6 +17,7 @@ public:
 private:
 	XML3DExporter* xml3d;
 	XML3DBone mRootBone;
+	std::string mSkeletonName; // HTML sanitised copy of the root bone name
 
 	void createBoneStructureRecursive(XML3DBone* currentBone, aiNode* currentBoneNode);
 };

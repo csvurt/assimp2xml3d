@@ -7,6 +7,9 @@ xml3d(ex)
 {
 	mRootBone = XML3DBone(NULL, root);
 	createBoneStructureRecursive(&mRootBone, root);
+	aiString skeletonName(root->mName);
+	ex->stringToHTMLId(skeletonName);
+	mSkeletonName = std::string(skeletonName.C_Str());
 }
 
 XML3DSkeleton::~XML3DSkeleton() {
@@ -31,5 +34,8 @@ void XML3DSkeleton::createBoneStructureRecursive(XML3DBone* currentBone, aiNode*
 }
 
 void XML3DSkeleton::createDebugOutput(tinyxml2::XMLElement* container) {
-	mRootBone.createDebugXML(container);
+	tinyxml2::XMLElement* skeleton = container->GetDocument()->NewElement("skeleton");
+	skeleton->SetAttribute("name", mSkeletonName.c_str());
+	mRootBone.createDebugXML(skeleton);
+	container->LinkEndChild(skeleton);
 }
