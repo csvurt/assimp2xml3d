@@ -109,3 +109,7 @@ int XML3DSkeleton::getIndexForBone(std::string& name) {
 	return -1;
 }
 
+unsigned int XML3DSkeleton::getNumberOfBones() {
+	return mBoneIndexVector.size();
+}
+

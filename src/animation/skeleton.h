@@ -16,6 +16,7 @@ public:
 	void createBoneData(tinyxml2::XMLElement* container);
 	XML3DBone* getBoneWithName(std::string& name);
 	int getIndexForBone(std::string& name);
+	unsigned int getNumberOfBones();
 
 private:
 	XML3DBone mRootBone;
