@@ -80,11 +80,14 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetData() {
 	if (aMesh->HasBones()) {
 		for (unsigned int i = 0; i < aMesh->mNumBones; i++) {
 			std::string name(aMesh->mBones[i]->mName.C_Str());
-			xml3d->discoverBone(name);
+			xml3d->mAnimationExporter.discoverBone(name);
 		}
 	}
 
 	return mDataElement;
 }
 
+bool XML3DMeshExporter::hasBones() {
+	return aMesh->HasBones();
+}
 

@@ -6,6 +6,8 @@ XML3DBone::XML3DBone() {};
 XML3DBone::XML3DBone(XML3DBone* parent, aiNode* node) :
 mParent(parent),
 mSceneNode(node) {
+	mChildren.reserve(node->mNumChildren);
+	mName = std::string(node->mName.C_Str());
 }
 
 XML3DBone::~XML3DBone() {
@@ -27,8 +29,22 @@ void XML3DBone::createDebugXML(tinyxml2::XMLElement* container) {
 	container->LinkEndChild(boneData);
 }
 
-XML3DBone* XML3DBone::newChild() {
-	mChildren.emplace_back();
-	mChildren.back().mParent = this;
+XML3DBone* XML3DBone::newChild(aiNode* node) {
+	mChildren.emplace_back(this, node);
 	return &mChildren.back();
+}
+
+XML3DBone* XML3DBone::findBoneWithName(std::string& name) {
+	if (mName == name) {
+		return this;
+	}
+	auto it = mChildren.begin();
+	while (it != mChildren.end()) {
+		XML3DBone* child = it->findBoneWithName(name);
+		if (child != NULL) {
+			return child;
+		}
+		it++;
+	}
+	return NULL;
 }

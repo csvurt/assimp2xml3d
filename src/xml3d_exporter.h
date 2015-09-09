@@ -8,9 +8,9 @@
 #include <unordered_map>
 #include <set>
 #include "tinyxml2.h"
+#include "animation/animation_exporter.h"
 
 class XML3DMeshExporter;
-class XML3DSkeleton;
 
 class XML3DExporter {
 public:
@@ -19,24 +19,22 @@ public:
 
 	aiScene* scene;
 	tinyxml2::XMLDocument doc;
+	tinyxml2::XMLElement* mAsset;
+	XML3DAnimationExporter mAnimationExporter;
 
 	void writeFile();
 	void Export();
-	void processSceneTree(tinyxml2::XMLElement* parent, aiNode* an, const aiMatrix4x4& parentTransform);
-	void processAnimationData(tinyxml2::XMLElement* asset);
 
 	void stringToHTMLId(aiString& str);
-	void discoverBone(std::string& name);
-	bool isKnownBone(std::string& name);
 
 private:
 	const char* filename;
 	unsigned int mChangedNamesCounter = 0;
 	std::unordered_map<std::string, char> usedNames;
-	std::vector<XML3DMeshExporter> mMeshExporters;
-	std::vector<XML3DSkeleton> mSkeletons;
-	std::set<std::string> mDiscoveredBoneNames;
+	std::vector<XML3DMeshExporter> mMeshExporters;	
 
 	void removeDummyMaterial(aiScene* scene);
+	void processSceneTree(tinyxml2::XMLElement* parent, aiNode* an, const aiMatrix4x4& parentTransform);
+	void exportMeshAnimationData();
 
 };

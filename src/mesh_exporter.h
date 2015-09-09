@@ -9,13 +9,16 @@ public:
 	XML3DMeshExporter(XML3DExporter* ex, aiMesh* mesh);
 	~XML3DMeshExporter();
 
+	aiMesh* aMesh;
+	tinyxml2::XMLElement* mDataElement;
+
 	tinyxml2::XMLElement* getAssetMesh(aiMatrix4x4* parentTransform);
 	tinyxml2::XMLElement* getAssetData();
+	bool hasBones();
 
 private:
 	XML3DExporter* xml3d;
-	aiMesh* aMesh;
-	tinyxml2::XMLElement* mDataElement;
+	
 
 	void discoverBones();
 };

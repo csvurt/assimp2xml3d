@@ -33,7 +33,6 @@ XML3DExporter::XML3DExporter(const aiScene* ai, const char* file) {
 	aiCopyScene(ai, &scene);
 	filename = file;
 	mMeshExporters = std::vector<XML3DMeshExporter>(0);
-	mSkeletons = std::vector<XML3DSkeleton>(0);
 }
 
 XML3DExporter::~XML3DExporter() {
@@ -45,9 +44,9 @@ void XML3DExporter::Export() {
 	doc.InsertFirstChild(doc.NewDeclaration());
 	tinyxml2::XMLElement* xml3d = doc.NewElement("xml3d");
 	tinyxml2::XMLElement* defs = doc.NewElement("defs");
-	tinyxml2::XMLElement* asset = doc.NewElement("asset");
+	mAsset = doc.NewElement("asset");
 	xml3d->InsertFirstChild(defs);
-	xml3d->LinkEndChild(asset);
+	xml3d->LinkEndChild(mAsset);
 	doc.LinkEndChild(xml3d);
 
 	std::string id(filename);
@@ -58,7 +57,7 @@ void XML3DExporter::Export() {
 		id = id.substr(id.find_last_of('\\') + 1, std::string::npos);
 	}
 	id = id.substr(0, id.find_first_of('.'));
-	asset->SetAttribute("id", id.c_str());
+	mAsset->SetAttribute("id", id.c_str());
 
 	removeDummyMaterial(scene);
 
@@ -69,7 +68,7 @@ void XML3DExporter::Export() {
 			mMeshExporters.emplace_back(this, scene->mMeshes[i]);
 			XML3DMeshExporter* mexp = &mMeshExporters.back();
 			tinyxml2::XMLElement* data = mexp->getAssetData();
-			asset->LinkEndChild(data);
+			mAsset->LinkEndChild(data);
 		}
 	}
 
@@ -82,9 +81,10 @@ void XML3DExporter::Export() {
 	}
 
 	// Flatten scene hierarchy into a list of assetmeshes and create animation skeletons
-	processSceneTree(asset, scene->mRootNode, aiMatrix4x4());
+	processSceneTree(mAsset, scene->mRootNode, aiMatrix4x4());
 
-	processAnimationData(asset);
+	exportMeshAnimationData();
+	mAnimationExporter.exportSkeletons(mAsset);
 
 	Logger::Info("Processed " + boost::lexical_cast<std::string>(scene->mNumMeshes) + " meshes and " +
 		boost::lexical_cast<std::string>(scene->mNumMaterials) + " materials.");
@@ -117,11 +117,9 @@ void XML3DExporter::processSceneTree(tinyxml2::XMLElement* parent, aiNode* an, c
 	}
 
 	std::string nodeName(an->mName.C_Str());
-	if (isKnownBone(nodeName)) {
+	if (mAnimationExporter.isKnownBone(nodeName)) {
 		// This is the root node of a skeleton, we let the XML3DSkeleton exporter process the subtree
-		mSkeletons.emplace_back(this, an);
-		XML3DSkeleton* skeleton = &mSkeletons.back();
-		skeleton->createDebugOutput(parent);
+		mAnimationExporter.processSkeleton(an);
 	}
 	else {
 		for (unsigned int i = 0; i < an->mNumChildren; i++) {
@@ -130,14 +128,14 @@ void XML3DExporter::processSceneTree(tinyxml2::XMLElement* parent, aiNode* an, c
 	}
 }
 
-void XML3DExporter::processAnimationData(tinyxml2::XMLElement* asset) {
-	auto it = mSkeletons.begin();
-	while (it != mSkeletons.end()) {
-		tinyxml2::XMLElement* skeletonData = it->getBoneData();
-		asset->LinkEndChild(skeletonData);
+void XML3DExporter::exportMeshAnimationData() {
+	auto it = mMeshExporters.begin();
+	while (it != mMeshExporters.end()) {
+		mAnimationExporter.exportMeshAnimationData(&(*it));
 		it++;
 	}
 }
+
 
 
 void XML3DExporter::writeFile() {
@@ -162,13 +160,4 @@ void XML3DExporter::stringToHTMLId(aiString& ai) {
 	usedNames.emplace(str, 'x');
 
 	ai.Set(str);
-}
-
-void XML3DExporter::discoverBone(std::string& name) {
-	mDiscoveredBoneNames.insert(name);
-}
-
-bool XML3DExporter::isKnownBone(std::string& name) {
-	auto it = mDiscoveredBoneNames.find(name);
-	return it != mDiscoveredBoneNames.end();
 }
