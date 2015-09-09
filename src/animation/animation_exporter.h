@@ -21,13 +21,17 @@ public:
 	XML3DSkeleton* findSkeletonForBoneName(std::string& name);
 
 private:
-	aiScene* scene;
+	const aiScene* scene;
 	std::vector<XML3DSkeleton> mSkeletons;
 	std::set<std::string> mDiscoveredBoneNames;
 
 	void addAnimationDataToMeshData(XML3DMeshExporter& meshExporter, XML3DSkeleton& skeleton);
 	void createBoneWeightElement(tinyxml2::XMLElement* dataElement, std::vector<float>& boneWeights);
 	void createBoneIndexElement(tinyxml2::XMLElement* dataElement, std::vector<int>& boneIndex);
+	void processAnimationKeyframes(aiAnimation* anim, tinyxml2::XMLElement* animData);
+	unsigned int getNumberOfKeyframesInAnimation(aiAnimation* anim);
+	void addKeyframeElementsToData(tinyxml2::XMLElement* animData, std::vector<aiVector3D*>& translations, std::vector<aiQuaternion*>& rotations, float key);
+	std::string stripAssimpSuffixFromBoneName(std::string& boneName); 
+	void createAnimationKeyBlock(aiAnimation* anim, tinyxml2::XMLElement* container);
 
-	
 };

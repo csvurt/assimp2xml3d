@@ -51,8 +51,11 @@ void XML3DExporter::Export() {
 	// Flatten scene hierarchy into a list of assetmeshes and create animation skeletons
 	processSceneTree(mAsset, scene->mRootNode, aiMatrix4x4());
 
+	//Note: This step also collects the inverseBindPose matrices for the skeletons
 	exportMeshAnimationData();
+
 	exportSkeletons();
+	exportAnimationKeyframes();
 
 	Logger::Info("Processed " + boost::lexical_cast<std::string>(scene->mNumMeshes) + " meshes and " +
 		boost::lexical_cast<std::string>(scene->mNumMaterials) + " materials.");
@@ -149,6 +152,9 @@ void XML3DExporter::exportSkeletons() {
 	mAnimationExporter.exportSkeletons(mAsset);
 }
 
+void XML3DExporter::exportAnimationKeyframes() {
+	mAnimationExporter.exportAnimationKeyframes(mAsset);
+}
 
 
 void XML3DExporter::writeFile() {

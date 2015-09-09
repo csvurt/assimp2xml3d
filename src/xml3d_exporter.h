@@ -42,5 +42,6 @@ private:
 	void exportMeshDataAndDiscoverBones();
 	void exportMaterials();
 	void exportSkeletons();
+	void exportAnimationKeyframes();
 
 };
