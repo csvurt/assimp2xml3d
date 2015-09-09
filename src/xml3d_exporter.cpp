@@ -41,11 +41,28 @@ XML3DExporter::~XML3DExporter() {
 }
 
 void XML3DExporter::Export() {
+	createAssetElements();
+	removeDummyMaterial(scene);
+
+	exportMaterials();
+	exportMeshDataAndDiscoverBones();
+
+	// Flatten scene hierarchy into a list of assetmeshes and create animation skeletons
+	processSceneTree(mAsset, scene->mRootNode, aiMatrix4x4());
+
+	exportMeshAnimationData();
+	exportSkeletons();
+
+	Logger::Info("Processed " + boost::lexical_cast<std::string>(scene->mNumMeshes) + " meshes and " +
+		boost::lexical_cast<std::string>(scene->mNumMaterials) + " materials.");
+}
+
+void XML3DExporter::createAssetElements() {
 	doc.InsertFirstChild(doc.NewDeclaration());
 	tinyxml2::XMLElement* xml3d = doc.NewElement("xml3d");
-	tinyxml2::XMLElement* defs = doc.NewElement("defs");
+	mDefs = doc.NewElement("defs");
 	mAsset = doc.NewElement("asset");
-	xml3d->InsertFirstChild(defs);
+	xml3d->InsertFirstChild(mDefs);
 	xml3d->LinkEndChild(mAsset);
 	doc.LinkEndChild(xml3d);
 
@@ -58,9 +75,9 @@ void XML3DExporter::Export() {
 	}
 	id = id.substr(0, id.find_first_of('.'));
 	mAsset->SetAttribute("id", id.c_str());
+}
 
-	removeDummyMaterial(scene);
-
+void XML3DExporter::exportMeshDataAndDiscoverBones() {
 	if (scene->HasMeshes()) {
 		// Mesh exporters are stored because they're needed later to export <assetmesh> elements and bone data if available
 		mMeshExporters.reserve(scene->mNumMeshes);
@@ -71,23 +88,16 @@ void XML3DExporter::Export() {
 			mAsset->LinkEndChild(data);
 		}
 	}
+}
 
+void XML3DExporter::exportMaterials() {
 	if (scene->HasMaterials()) {
 		for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
 			XML3DMaterialExporter matExp(this, scene->mMaterials[i]);
 			tinyxml2::XMLElement* material = matExp.getMaterial();
-			defs->LinkEndChild(material);
+			mDefs->LinkEndChild(material);
 		}
 	}
-
-	// Flatten scene hierarchy into a list of assetmeshes and create animation skeletons
-	processSceneTree(mAsset, scene->mRootNode, aiMatrix4x4());
-
-	exportMeshAnimationData();
-	mAnimationExporter.exportSkeletons(mAsset);
-
-	Logger::Info("Processed " + boost::lexical_cast<std::string>(scene->mNumMeshes) + " meshes and " +
-		boost::lexical_cast<std::string>(scene->mNumMaterials) + " materials.");
 }
 
 // Assimp will always generate a material even if it was instructed to ignore materials during the import process.
@@ -105,7 +115,7 @@ void XML3DExporter::removeDummyMaterial(aiScene* scene) {
 }
 
 void XML3DExporter::processSceneTree(tinyxml2::XMLElement* parent, aiNode* an, const aiMatrix4x4& parentTransform) {
-	// Flatten all non-mesh nodes while gathering the transformations 
+	// Flatten all non-mesh nodes while gathering the transformations and animation skeletons
 
 	aiMatrix4x4 t(an->mTransformation);
 	t = parentTransform * t;
@@ -129,11 +139,13 @@ void XML3DExporter::processSceneTree(tinyxml2::XMLElement* parent, aiNode* an, c
 }
 
 void XML3DExporter::exportMeshAnimationData() {
-	auto it = mMeshExporters.begin();
-	while (it != mMeshExporters.end()) {
+	for (auto it = mMeshExporters.begin(); it != mMeshExporters.end(); ++it) {
 		mAnimationExporter.exportMeshAnimationData(&(*it));
-		it++;
 	}
+}
+
+void XML3DExporter::exportSkeletons() {
+	mAnimationExporter.exportSkeletons(mAsset);
 }
 
 

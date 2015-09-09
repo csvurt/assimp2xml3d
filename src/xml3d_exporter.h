@@ -20,6 +20,7 @@ public:
 	aiScene* scene;
 	tinyxml2::XMLDocument doc;
 	tinyxml2::XMLElement* mAsset;
+	tinyxml2::XMLElement* mDefs;
 	XML3DAnimationExporter mAnimationExporter;
 
 	void writeFile();
@@ -34,7 +35,12 @@ private:
 	std::vector<XML3DMeshExporter> mMeshExporters;	
 
 	void removeDummyMaterial(aiScene* scene);
+	void createAssetElements();
 	void processSceneTree(tinyxml2::XMLElement* parent, aiNode* an, const aiMatrix4x4& parentTransform);
+
 	void exportMeshAnimationData();
+	void exportMeshDataAndDiscoverBones();
+	void exportMaterials();
+	void exportSkeletons();
 
 };

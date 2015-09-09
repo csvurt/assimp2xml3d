@@ -25,23 +25,19 @@ void XML3DAnimationExporter::processSkeleton(aiNode* rootNode) {
 }
 
 XML3DSkeleton* XML3DAnimationExporter::findSkeletonForBoneName(std::string& name) {
-	auto it = mSkeletons.begin();
-	while (it != mSkeletons.end()) {
+	for (auto it = mSkeletons.begin(); it != mSkeletons.end(); ++it) {
 		XML3DBone* matchingBone = it->getBoneWithName(name);
 		if (matchingBone != NULL) {
 			return &(*it);
 		}
-		it++;
 	}
 	return NULL;
 }
 
 void XML3DAnimationExporter::exportSkeletons(tinyxml2::XMLElement* container) {
-	auto it = mSkeletons.begin();
-	while (it != mSkeletons.end()) {
+	for (auto it = mSkeletons.begin(); it != mSkeletons.end(); ++it) {
 		it->createBoneData(container);
 		it->createDebugOutput(container);
-		it++;
 	}
 }
 
