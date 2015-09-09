@@ -5,7 +5,7 @@
 
 XML3DAnimationExporter::XML3DAnimationExporter() {};
 
-XML3DAnimationExporter::XML3DAnimationExporter(aiScene* s) :
+XML3DAnimationExporter::XML3DAnimationExporter(const aiScene* s) :
 scene(s)
 {
 	mSkeletons = std::vector<XML3DSkeleton>(0);

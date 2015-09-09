@@ -9,7 +9,7 @@ class XML3DMeshExporter;
 class XML3DAnimationExporter {
 public:
 	XML3DAnimationExporter();
-	XML3DAnimationExporter(aiScene* s);
+	XML3DAnimationExporter(const aiScene* s);
 	
 	void exportSkeletons(tinyxml2::XMLElement* container);
 	void exportMeshAnimationData(XML3DMeshExporter* meshExporter);

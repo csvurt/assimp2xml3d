@@ -33,6 +33,7 @@ XML3DExporter::XML3DExporter(const aiScene* ai, const char* file) {
 	aiCopyScene(ai, &scene);
 	filename = file;
 	mMeshExporters = std::vector<XML3DMeshExporter>(0);
+	mAnimationExporter = XML3DAnimationExporter(ai);
 }
 
 XML3DExporter::~XML3DExporter() {
