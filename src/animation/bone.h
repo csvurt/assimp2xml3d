@@ -7,7 +7,7 @@ class XML3DBone {
 
 public:
 	XML3DBone* mParent;
-	aiNode* mSceneNode;
+	const aiNode* mSceneNode;
 	aiMatrix4x4 mLocalTransformation;
 	aiMatrix4x4 mGlobalTransformation;
 	aiMatrix4x4 mInverseBindPose;
@@ -15,11 +15,11 @@ public:
 	std::string mName;
 
 	XML3DBone();
-	XML3DBone(XML3DBone* parent, aiNode* node);
+	XML3DBone(XML3DBone* parent, const aiNode* node);
 	~XML3DBone();
 
 	void createDebugXML(tinyxml2::XMLElement* container);
-	XML3DBone* newChild(aiNode* node);
+	XML3DBone* newChild(const aiNode* node);
 	XML3DBone* findBoneWithName(std::string& name);
 
 

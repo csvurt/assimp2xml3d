@@ -16,7 +16,7 @@ void XML3DAnimationExporter::discoverBone(std::string& name) {
 }
 
 bool XML3DAnimationExporter::isKnownBone(std::string& name) {
-	auto it = mDiscoveredBoneNames.find(name);
+	const auto it = mDiscoveredBoneNames.find(name);
 	return it != mDiscoveredBoneNames.end();
 }
 
@@ -26,7 +26,7 @@ void XML3DAnimationExporter::processSkeleton(aiNode* rootNode) {
 
 XML3DSkeleton* XML3DAnimationExporter::findSkeletonForBoneName(std::string& name) {
 	for (auto it = mSkeletons.begin(); it != mSkeletons.end(); ++it) {
-		XML3DBone* matchingBone = it->getBoneWithName(name);
+		const XML3DBone* matchingBone = it->getBoneWithName(name);
 		if (matchingBone != NULL) {
 			return &(*it);
 		}
@@ -56,7 +56,7 @@ void XML3DAnimationExporter::exportMeshAnimationData(XML3DMeshExporter* meshExpo
 
 void XML3DAnimationExporter::exportAnimationKeyframes(tinyxml2::XMLElement* container) {
 	for (int i = 0; i < scene->mNumAnimations; i++) {
-		aiAnimation* anim = scene->mAnimations[i];
+		const aiAnimation* anim = scene->mAnimations[i];
 		tinyxml2::XMLElement* animData = container->GetDocument()->NewElement("assetdata");
 		//xml3d->stringToHTMLId(mAnim->mName);
 		animData->SetAttribute("name", anim->mName.C_Str());
@@ -72,9 +72,9 @@ void XML3DAnimationExporter::addAnimationDataToMeshData(XML3DMeshExporter& meshE
 		std::vector<int> boneIndices(meshExporter.aMesh->mNumVertices * 4);	//numVertices * int4
 		
 		for (unsigned int i = 0; i < meshExporter.aMesh->mNumBones; i++) {
-			aiBone* bone = meshExporter.aMesh->mBones[i];
+			const aiBone* bone = meshExporter.aMesh->mBones[i];
 			std::string boneName(bone->mName.C_Str());
-			int boneIndex = skeleton.getIndexForBone(boneName);
+			const int boneIndex = skeleton.getIndexForBone(boneName);
 			if (boneIndex < 0) {
 				Logger::Debug("There was a bone in a mesh that does not appear in the skeleton hierarchy, " + boneName);
 				continue;
@@ -121,7 +121,7 @@ void XML3DAnimationExporter::createBoneIndexElement(tinyxml2::XMLElement* dataEl
 	dataElement->LinkEndChild(boneIndexElement);
 }
 
-void XML3DAnimationExporter::createAnimationKeyBlock(aiAnimation* anim, tinyxml2::XMLElement* container) {
+void XML3DAnimationExporter::createAnimationKeyBlock(const aiAnimation* anim, tinyxml2::XMLElement* container) {
 	std::string animName = std::string(anim->mName.C_Str()) + "_key";
 	tinyxml2::XMLElement* animKeyBlock = container->GetDocument()->NewElement("assetdata");
 	animKeyBlock->SetAttribute("name", animName.c_str());
@@ -134,9 +134,9 @@ void XML3DAnimationExporter::createAnimationKeyBlock(aiAnimation* anim, tinyxml2
 	container->InsertFirstChild(animKeyBlock);
 }
 
-void XML3DAnimationExporter::processAnimationKeyframes(aiAnimation* anim, tinyxml2::XMLElement* animData) {
-	int numKeyframes = getNumberOfKeyframesInAnimation(anim);
-	float keyframeDuration = (anim->mDuration / numKeyframes) / anim->mTicksPerSecond;
+void XML3DAnimationExporter::processAnimationKeyframes(const aiAnimation* anim, tinyxml2::XMLElement* animData) {
+	const int numKeyframes = getNumberOfKeyframesInAnimation(anim);
+	const float keyframeDuration = (anim->mDuration / numKeyframes) / anim->mTicksPerSecond;
 	float currentKey = 0.f;
 	aiVector3D zerov(0.f, 0.f, 0.f);
 	aiQuaternion zeroq(1.f, 0.f, 0.f, 0.f);
@@ -148,7 +148,7 @@ void XML3DAnimationExporter::processAnimationKeyframes(aiAnimation* anim, tinyxm
 		return;
 	}
 
-	unsigned int numBones = skeleton->getNumberOfBones();
+	const unsigned int numBones = skeleton->getNumberOfBones();
 	for (unsigned int i = 0; i < numKeyframes; i++) {
 		std::vector<aiVector3D*> translations(numBones, &zerov);
 		std::vector<aiQuaternion*> rotations(numBones, &zeroq);
@@ -158,7 +158,7 @@ void XML3DAnimationExporter::processAnimationKeyframes(aiAnimation* anim, tinyxm
 			aiNodeAnim* channel = anim->mChannels[ch];
 			std::string boneName = std::string(channel->mNodeName.C_Str());
 			std::string strippedBoneName = stripAssimpSuffixFromBoneName(boneName);
-			int boneIndex = skeleton->getIndexForBone(strippedBoneName);
+			const int boneIndex = skeleton->getIndexForBone(strippedBoneName);
 
 			if (channel->mNumPositionKeys >= numKeyframes) {
 				translations[boneIndex] = &channel->mPositionKeys[i].mValue;
@@ -178,10 +178,10 @@ std::string XML3DAnimationExporter::stripAssimpSuffixFromBoneName(std::string& b
 	return boneName.substr(0, boneName.find_first_of('$') - 1); // Take the <bonename> part
 }
 
-unsigned int XML3DAnimationExporter::getNumberOfKeyframesInAnimation(aiAnimation* anim) {
+unsigned int XML3DAnimationExporter::getNumberOfKeyframesInAnimation(const aiAnimation* anim) {
 	unsigned int numKeyframes = 0;
 	for (unsigned int ch = 0; ch < anim->mNumChannels; ch++) {
-		aiNodeAnim* channel = anim->mChannels[ch];
+		const aiNodeAnim* channel = anim->mChannels[ch];
 		unsigned int keyframes = std::max(channel->mNumPositionKeys, channel->mNumRotationKeys);
 		numKeyframes = std::max(numKeyframes, keyframes);
 	}

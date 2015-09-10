@@ -18,7 +18,7 @@ XML3DSkeleton::~XML3DSkeleton() {
 
 }
 
-void XML3DSkeleton::createBoneStructureRecursive(XML3DBone* currentBone, aiNode* currentBoneNode) {
+void XML3DSkeleton::createBoneStructureRecursive(XML3DBone* currentBone, const aiNode* currentBoneNode) {
 	currentBone->mSceneNode = currentBoneNode;
 	currentBone->mLocalTransformation = currentBoneNode->mTransformation; 
 
@@ -52,7 +52,7 @@ void XML3DSkeleton::createBoneData(tinyxml2::XMLElement* container) {
 	tinyxml2::XMLElement* dataElement = container->GetDocument()->NewElement("assetdata");
 	dataElement->SetAttribute("name", mSkeletonName.c_str());
 
-	int numBones = mBoneIndexVector.size();
+	const int numBones = mBoneIndexVector.size();
 
 	std::vector<int> boneParents;
 	std::vector<aiMatrix4x4> inverseBindPose;
@@ -60,7 +60,7 @@ void XML3DSkeleton::createBoneData(tinyxml2::XMLElement* container) {
 	inverseBindPose.reserve(numBones);
 
 	for (int i = 0; i < numBones; i++) {
-		XML3DBone* bone = getBoneWithName(mBoneIndexVector.at(i));
+		const XML3DBone* bone = getBoneWithName(mBoneIndexVector.at(i));
 		boneParents.push_back(i - 1);
 		inverseBindPose.push_back(bone->mGlobalTransformation * bone->mInverseBindPose);
 	}

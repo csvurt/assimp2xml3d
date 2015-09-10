@@ -3,7 +3,7 @@
 
 XML3DBone::XML3DBone() {};
 
-XML3DBone::XML3DBone(XML3DBone* parent, aiNode* node) :
+XML3DBone::XML3DBone(XML3DBone* parent, const aiNode* node) :
 mParent(parent),
 mSceneNode(node) {
 	mChildren.reserve(node->mNumChildren);
@@ -29,7 +29,7 @@ void XML3DBone::createDebugXML(tinyxml2::XMLElement* container) {
 	container->LinkEndChild(boneData);
 }
 
-XML3DBone* XML3DBone::newChild(aiNode* node) {
+XML3DBone* XML3DBone::newChild(const aiNode* node) {
 	mChildren.emplace_back(this, node);
 	return &mChildren.back();
 }

@@ -23,7 +23,7 @@ private:
 	std::string mSkeletonName; // HTML sanitised copy of the root bone name
 	std::vector<std::string> mBoneIndexVector;
 
-	void createBoneStructureRecursive(XML3DBone* currentBone, aiNode* currentBoneNode);
+	void createBoneStructureRecursive(XML3DBone* currentBone, const aiNode* currentBoneNode);
 	void createBoneParentsElement(tinyxml2::XMLElement* dataElement, std::vector<int>* boneParents);
 	void createInverseBindPoseElement(tinyxml2::XMLElement* dataElement, std::vector<aiMatrix4x4>* invBindPose);
 };
