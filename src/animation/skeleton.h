@@ -25,6 +25,5 @@ private:
 
 	void createBoneStructureRecursive(XML3DBone* currentBone, aiNode* currentBoneNode);
 	void createBoneParentsElement(tinyxml2::XMLElement* dataElement, std::vector<int>* boneParents);
-	void createBoneTransformsElement(tinyxml2::XMLElement* dataElement, std::vector<aiMatrix4x4>* boneTransforms);
 	void createInverseBindPoseElement(tinyxml2::XMLElement* dataElement, std::vector<aiMatrix4x4>* invBindPose);
 };

@@ -55,21 +55,17 @@ void XML3DSkeleton::createBoneData(tinyxml2::XMLElement* container) {
 	int numBones = mBoneIndexVector.size();
 
 	std::vector<int> boneParents;
-	std::vector<aiMatrix4x4> boneTransforms;
 	std::vector<aiMatrix4x4> inverseBindPose;
 	boneParents.reserve(numBones);
-	boneTransforms.reserve(numBones);
 	inverseBindPose.reserve(numBones);
 
 	for (int i = 0; i < numBones; i++) {
 		XML3DBone* bone = getBoneWithName(mBoneIndexVector.at(i));
 		boneParents.push_back(i - 1);
-		boneTransforms.push_back(bone->mGlobalTransformation);
-		inverseBindPose.push_back(bone->mInverseBindPose);
+		inverseBindPose.push_back(bone->mGlobalTransformation * bone->mInverseBindPose);
 	}
 
 	createBoneParentsElement(dataElement, &boneParents);
-	createBoneTransformsElement(dataElement, &boneTransforms);
 	createInverseBindPoseElement(dataElement, &inverseBindPose);
 
 	container->InsertFirstChild(dataElement);
@@ -84,13 +80,6 @@ void XML3DSkeleton::createBoneParentsElement(tinyxml2::XMLElement* dataElement, 
 	boneParentsElement->SetAttribute("name", "boneParent");
 	boneParentsElement->SetText(XML3DDataConverter::toXml3dString(boneParents).c_str());
 	dataElement->LinkEndChild(boneParentsElement);
-}
-
-void XML3DSkeleton::createBoneTransformsElement(tinyxml2::XMLElement* dataElement, std::vector<aiMatrix4x4>* boneTransforms) {
-	tinyxml2::XMLElement* boneTransformsElement = dataElement->GetDocument()->NewElement("int");
-	boneTransformsElement->SetAttribute("name", "boneTransform");
-	boneTransformsElement->SetText(XML3DDataConverter::toXml3dString(boneTransforms).c_str());
-	dataElement->LinkEndChild(boneTransformsElement);
 }
 
 void XML3DSkeleton::createInverseBindPoseElement(tinyxml2::XMLElement* dataElement, std::vector<aiMatrix4x4>* invBindPose) {
