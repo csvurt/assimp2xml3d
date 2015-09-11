@@ -141,8 +141,12 @@ void XML3DAnimationExporter::processAnimationKeyframes(const aiAnimation* anim, 
 	aiVector3D zerov(0.f, 0.f, 0.f);
 	aiQuaternion zeroq(1.f, 0.f, 0.f, 0.f);
 
-	std::string boneName = std::string(anim->mChannels[0]->mNodeName.C_Str());
-	XML3DSkeleton* skeleton = findSkeletonForBoneName(boneName);
+	XML3DSkeleton* skeleton;
+	for (unsigned int i = 0; i < anim->mNumChannels; i++) {
+		std::string boneName = std::string(anim->mChannels[1]->mNodeName.C_Str());
+		skeleton = findSkeletonForBoneName(boneName);
+		if (skeleton != NULL) break;
+	}
 	if (skeleton == NULL) {
 		Logger::Debug("Could not find matching skeleton for the animation " + std::string(anim->mName.C_Str()));
 		return;
