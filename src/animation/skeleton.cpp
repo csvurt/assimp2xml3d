@@ -21,18 +21,14 @@ XML3DSkeleton::~XML3DSkeleton() {
 void XML3DSkeleton::createBoneStructureRecursive(XML3DBone* currentBone, const aiNode* currentBoneNode) {
 	currentBone->mSceneNode = currentBoneNode;
 	currentBone->mLocalTransformation = currentBoneNode->mTransformation; 
+	currentBone->mGlobalTransformation = currentBone->mParent != NULL ?
+		currentBone->mParent->mGlobalTransformation * currentBoneNode->mTransformation :
+		currentBoneNode->mTransformation;
 
 	std::string nodeName = std::string(currentBoneNode->mName.C_Str());
 	if (nodeName.find(ASSIMP_FBX_SUFFIX) == std::string::npos) {
 		// This vector will be used to ensure the export order of the various animation datas are always consistent
 		mBoneIndexVector.emplace_back(nodeName);
-	}
-
-	if (currentBone->mParent != NULL) {
-		currentBone->mGlobalTransformation = currentBone->mParent->mGlobalTransformation * currentBoneNode->mTransformation;
-	}
-	else {
-		currentBone->mGlobalTransformation = currentBoneNode->mTransformation;
 	}
 
 	for (unsigned int i = 0; i < currentBoneNode->mNumChildren; i++) {
@@ -60,9 +56,15 @@ void XML3DSkeleton::createBoneData(tinyxml2::XMLElement* container) {
 	inverseBindPose.reserve(numBones);
 
 	for (int i = 0; i < numBones; i++) {
-		const XML3DBone* bone = getBoneWithName(mBoneIndexVector.at(i));
-		boneParents.push_back(i - 1);
-		inverseBindPose.push_back(bone->mGlobalTransformation * bone->mInverseBindPose);
+		XML3DBone* bone = getBoneWithName(mBoneIndexVector.at(i));
+		const XML3DBone* parent = bone->mParent;
+		int parentIndex = -1;
+		while (parent != NULL && parentIndex < 0) {
+			parentIndex = getIndexForBone(parent->mName);
+			parent = parent->mParent;
+		}
+		boneParents.push_back(parentIndex);
+		inverseBindPose.push_back(bone->mInverseBindPose);
 	}
 
 	createBoneParentsElement(dataElement, &boneParents);
@@ -71,7 +73,7 @@ void XML3DSkeleton::createBoneData(tinyxml2::XMLElement* container) {
 	container->InsertFirstChild(dataElement);
 }
 
-XML3DBone* XML3DSkeleton::getBoneWithName(std::string& name) {
+XML3DBone* XML3DSkeleton::getBoneWithName(const std::string& name) {
 	return mRootBone.findBoneWithName(name);
 }
 
@@ -89,7 +91,7 @@ void XML3DSkeleton::createInverseBindPoseElement(tinyxml2::XMLElement* dataEleme
 	dataElement->LinkEndChild(invBindPoseElement);
 }
 
-int XML3DSkeleton::getIndexForBone(std::string& name) {
+int XML3DSkeleton::getIndexForBone(const std::string& name) {
 	for (int i = 0; i < mBoneIndexVector.size(); i++) {
 		if (mBoneIndexVector.at(i) == name) {
 			return i;

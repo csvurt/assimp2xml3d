@@ -12,11 +12,14 @@ public:
 	XML3DSkeleton(aiNode* root);
 	~XML3DSkeleton();
 
+	std::vector<aiAnimation*> mAnimations;
+
 	void createDebugOutput(tinyxml2::XMLElement* container);
 	void createBoneData(tinyxml2::XMLElement* container);
-	XML3DBone* getBoneWithName(std::string& name);
-	int getIndexForBone(std::string& name);
+	XML3DBone* getBoneWithName(const std::string& name);
+	int getIndexForBone(const std::string& name);
 	unsigned int getNumberOfBones();
+	void addAnimation(aiAnimation* anim);
 
 private:
 	XML3DBone mRootBone;

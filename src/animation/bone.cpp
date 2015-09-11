@@ -3,7 +3,7 @@
 
 XML3DBone::XML3DBone() {};
 
-XML3DBone::XML3DBone(XML3DBone* parent, const aiNode* node) :
+XML3DBone::XML3DBone(const XML3DBone* parent, const aiNode* node) :
 mParent(parent),
 mSceneNode(node) {
 	mChildren.reserve(node->mNumChildren);
@@ -11,7 +11,11 @@ mSceneNode(node) {
 }
 
 XML3DBone::~XML3DBone() {
-
+	auto it = mChildren.begin();
+	while (it != mChildren.end()) {
+		delete *it;
+		it = mChildren.erase(it);
+	}
 }
 
 void XML3DBone::createDebugXML(tinyxml2::XMLElement* container) {
@@ -22,7 +26,7 @@ void XML3DBone::createDebugXML(tinyxml2::XMLElement* container) {
 
 	auto it = mChildren.begin();
 	while (it != mChildren.end()) {
-		it->createDebugXML(boneData);
+		(*it)->createDebugXML(boneData);
 		it++;
 	}
 
@@ -30,17 +34,18 @@ void XML3DBone::createDebugXML(tinyxml2::XMLElement* container) {
 }
 
 XML3DBone* XML3DBone::newChild(const aiNode* node) {
-	mChildren.emplace_back(this, node);
-	return &mChildren.back();
+	XML3DBone* child = new XML3DBone(this, node);
+	mChildren.push_back(child);
+	return child;
 }
 
-XML3DBone* XML3DBone::findBoneWithName(std::string& name) {
+XML3DBone* XML3DBone::findBoneWithName(const std::string& name) {
 	if (mName == name) {
 		return this;
 	}
 	auto it = mChildren.begin();
 	while (it != mChildren.end()) {
-		XML3DBone* child = it->findBoneWithName(name);
+		XML3DBone* child = (*it)->findBoneWithName(name);
 		if (child != NULL) {
 			return child;
 		}
