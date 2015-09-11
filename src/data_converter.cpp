@@ -58,11 +58,21 @@ std::string XML3DDataConverter::toXml3dString(aiColor4D* v, unsigned int numVert
 
 
 
-std::string XML3DDataConverter::toXml3dString(std::vector<float>* v) {
+std::string XML3DDataConverter::toXml3dString(float* v, const int len) {
 	std::stringstream ss;
 
-	for (auto it = v->begin(); it != v->end(); it++) {
-		ss << *it << ' ';
+	for (int i = 0; i < len; i++) {
+		ss << v[i] << ' ';
+	}
+
+	return ss.str();
+}
+
+std::string XML3DDataConverter::toXml3dString(int* v, const int len) {
+	std::stringstream ss;
+
+	for (int i = 0; i < len; i++) {
+		ss << v[i] << ' ';
 	}
 
 	return ss.str();
@@ -71,7 +81,7 @@ std::string XML3DDataConverter::toXml3dString(std::vector<float>* v) {
 std::string XML3DDataConverter::toXml3dString(std::vector<int>* v) {
 	std::stringstream ss;
 
-	for (auto it = v->begin(); it != v->end(); it++) {
+	for (auto it = v->begin(); it != v->end(); ++it) {
 		ss << *it << ' ';
 	}
 

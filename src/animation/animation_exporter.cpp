@@ -68,8 +68,9 @@ void XML3DAnimationExporter::exportAnimationKeyframes(tinyxml2::XMLElement* cont
 }
 
 void XML3DAnimationExporter::addAnimationDataToMeshData(XML3DMeshExporter& meshExporter, XML3DSkeleton& skeleton) {
-		std::vector<float> boneWeights(meshExporter.aMesh->mNumVertices * 4); //numVertices * float4
-		std::vector<int> boneIndices(meshExporter.aMesh->mNumVertices * 4);	//numVertices * int4
+		const int numValues = meshExporter.aMesh->mNumVertices * 4;
+		float* boneWeights = new float[numValues](); //numVertices * float4
+		int* boneIndices = new int[numValues]();	//numVertices * int4
 		
 		for (unsigned int i = 0; i < meshExporter.aMesh->mNumBones; i++) {
 			const aiBone* bone = meshExporter.aMesh->mBones[i];
@@ -100,24 +101,26 @@ void XML3DAnimationExporter::addAnimationDataToMeshData(XML3DMeshExporter& meshE
 		}
 	}
 		
-	createBoneWeightElement(meshExporter.mDataElement, boneWeights);
-	createBoneIndexElement(meshExporter.mDataElement, boneIndices);
+	createBoneWeightElement(meshExporter.mDataElement, boneWeights, numValues);
+	createBoneIndexElement(meshExporter.mDataElement, boneIndices, numValues);
 	//meshExporter.mDataElement->SetAttribute("includes", nameOfBoneDataElement.c_str());
 	meshExporter.mDataElement->SetAttribute("compute", "dataflow['protos.xml#animateMesh']");
 
+	delete[] boneWeights;
+	delete[] boneIndices; 
 }
 
-void XML3DAnimationExporter::createBoneWeightElement(tinyxml2::XMLElement* dataElement, std::vector<float>& boneWeights) {
+void XML3DAnimationExporter::createBoneWeightElement(tinyxml2::XMLElement* dataElement, float* boneWeights, const int numValues) {
 	tinyxml2::XMLElement* boneWeightElement = dataElement->GetDocument()->NewElement("float4");
 	boneWeightElement->SetAttribute("name", "boneWeight");
-	boneWeightElement->SetText(XML3DDataConverter::toXml3dString(&boneWeights).c_str());
+	boneWeightElement->SetText(XML3DDataConverter::toXml3dString(boneWeights, numValues).c_str());
 	dataElement->LinkEndChild(boneWeightElement);
 }
 
-void XML3DAnimationExporter::createBoneIndexElement(tinyxml2::XMLElement* dataElement, std::vector<int>& boneIndicies) {
+void XML3DAnimationExporter::createBoneIndexElement(tinyxml2::XMLElement* dataElement, int* boneIndicies, const int numValues) {
 	tinyxml2::XMLElement* boneIndexElement = dataElement->GetDocument()->NewElement("int4");
 	boneIndexElement->SetAttribute("name", "boneIndex");
-	boneIndexElement->SetText(XML3DDataConverter::toXml3dString(&boneIndicies).c_str());
+	boneIndexElement->SetText(XML3DDataConverter::toXml3dString(boneIndicies, numValues).c_str());
 	dataElement->LinkEndChild(boneIndexElement);
 }
 

@@ -26,8 +26,8 @@ private:
 	std::set<std::string> mDiscoveredBoneNames;
 
 	void addAnimationDataToMeshData(XML3DMeshExporter& meshExporter, XML3DSkeleton& skeleton);
-	void createBoneWeightElement(tinyxml2::XMLElement* dataElement, std::vector<float>& boneWeights);
-	void createBoneIndexElement(tinyxml2::XMLElement* dataElement, std::vector<int>& boneIndex);
+	void createBoneWeightElement(tinyxml2::XMLElement* dataElement, float* boneWeights, const int numValues);
+	void createBoneIndexElement(tinyxml2::XMLElement* dataElement, int* boneIndex, const int numValues);
 	void processAnimationKeyframes(const aiAnimation* anim, tinyxml2::XMLElement* animData);
 	unsigned int getNumberOfKeyframesInAnimation(const aiAnimation* anim);
 	void addKeyframeElementsToData(tinyxml2::XMLElement* animData, std::vector<aiVector3D*>& translations, std::vector<aiQuaternion*>& rotations, float key);
