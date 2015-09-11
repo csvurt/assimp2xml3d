@@ -56,9 +56,9 @@ void XML3DAnimationExporter::exportMeshAnimationData(XML3DMeshExporter* meshExpo
 
 void XML3DAnimationExporter::exportAnimationKeyframes(tinyxml2::XMLElement* container) {
 	for (int i = 0; i < scene->mNumAnimations; i++) {
-		const aiAnimation* anim = scene->mAnimations[i];
+		aiAnimation* anim = scene->mAnimations[i];
 		tinyxml2::XMLElement* animData = container->GetDocument()->NewElement("assetdata");
-		//xml3d->stringToHTMLId(mAnim->mName);
+		XML3DDataConverter::stringToHTMLId(anim->mName);
 		animData->SetAttribute("name", anim->mName.C_Str());
 
 		processAnimationKeyframes(anim, animData);

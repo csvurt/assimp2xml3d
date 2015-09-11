@@ -24,7 +24,7 @@ tinyxml2::XMLElement* XML3DMaterialExporter::getMaterial() {
 	tinyxml2::XMLElement* material = xml3d->doc.NewElement("material");
 	aiString name;
 	aMat->Get(AI_MATKEY_NAME, name);
-	xml3d->stringToHTMLId(name);
+	XML3DDataConverter::stringToHTMLId(name);
 	material->SetAttribute("id", name.C_Str());
 	material->SetAttribute("model", "urn:xml3d:material:phong"); //TODO: Choose right shading model
 

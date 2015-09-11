@@ -160,23 +160,3 @@ void XML3DExporter::exportAnimationKeyframes() {
 void XML3DExporter::writeFile() {
 	doc.SaveFile(filename);
 }
-
-
-void XML3DExporter::stringToHTMLId(aiString& ai) {
-	// Ensure the name is not empty and is safe to use as an HTML5 id string
-	std::string str(ai.C_Str());
-
-	if (!(str.length() > 0)) {
-		str = "_Generated_Name_" + boost::lexical_cast<std::string>(mChangedNamesCounter++);
-	}
-
-	std::replace(str.begin(), str.end(), ' ', '_');
-
-	if (usedNames.count(str) > 0) {
-		str += "_" + boost::lexical_cast<std::string>(mChangedNamesCounter++);
-		Logger::Warn("Renamed '" + str.substr(0, str.find_last_of("_")) + "' to '" + str + "' to avoid duplicate IDs");
-	}
-	usedNames.emplace(str, 'x');
-
-	ai.Set(str);
-}

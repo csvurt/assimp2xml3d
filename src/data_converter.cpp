@@ -3,6 +3,8 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <assimp/../../code/BoostWorkaround/boost/lexical_cast.hpp>
+#include <unordered_map>
 
 static const float EPSILON = 0.00001f;
 
@@ -124,4 +126,27 @@ std::string XML3DDataConverter::toXml3dString(aiFace* f, unsigned int numFaces) 
 	}
 
 	return ss.str();
+}
+
+static int ChangedNamesCounter = 0;
+static std::unordered_map<std::string, char> UsedNames;
+
+void XML3DDataConverter::stringToHTMLId(aiString& ai) {
+	// Ensure the name is not empty and is safe to use as an HTML5 id string
+	std::string str(ai.C_Str());
+
+	if (!(str.length() > 0)) {
+		str = "_Generated_Name_" + boost::lexical_cast<std::string>(ChangedNamesCounter++);
+	}
+
+	std::replace(str.begin(), str.end(), ' ', '_');
+	std::replace(str.begin(), str.end(), '.', '_'); // . can interfere with asset includes
+
+	if (UsedNames.count(str) > 0) {
+		str += "_" + boost::lexical_cast<std::string>(ChangedNamesCounter++);
+		Logger::Warn("Renamed '" + str.substr(0, str.find_last_of("_")) + "' to '" + str + "' to avoid duplicate IDs");
+	}
+	UsedNames.emplace(str, 'x');
+
+	ai.Set(str);
 }

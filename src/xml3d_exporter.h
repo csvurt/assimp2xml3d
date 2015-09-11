@@ -5,7 +5,6 @@
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
 #include <assimp/scene.h>
-#include <unordered_map>
 #include <set>
 #include "tinyxml2.h"
 #include "animation/animation_exporter.h"
@@ -26,12 +25,8 @@ public:
 	void writeFile();
 	void Export();
 
-	void stringToHTMLId(aiString& str);
-
 private:
 	const char* filename;
-	unsigned int mChangedNamesCounter = 0;
-	std::unordered_map<std::string, char> usedNames;
 	std::vector<XML3DMeshExporter> mMeshExporters;	
 
 	void removeDummyMaterial(aiScene* scene);

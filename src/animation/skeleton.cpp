@@ -10,7 +10,7 @@ XML3DSkeleton::XML3DSkeleton(aiNode* root) {
 	mRootBone = XML3DBone(NULL, root);
 	createBoneStructureRecursive(&mRootBone, root);
 	aiString skeletonName(root->mName);
-	//ex->stringToHTMLId(skeletonName);
+	XML3DDataConverter::stringToHTMLId(skeletonName);
 	mSkeletonName = std::string(skeletonName.C_Str());
 }
 

@@ -35,7 +35,7 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetMesh(aiMatrix4x4* parentTransfo
 
 tinyxml2::XMLElement* XML3DMeshExporter::getAssetData() {
 	mDataElement = xml3d->doc.NewElement("assetdata");
-	xml3d->stringToHTMLId(aMesh->mName);
+	XML3DDataConverter::stringToHTMLId(aMesh->mName);
 	mDataElement->SetAttribute("name", aMesh->mName.C_Str());
 
 	//Export indices

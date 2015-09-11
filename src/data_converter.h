@@ -16,6 +16,8 @@ public:
 	static std::string toXml3dString(aiFace* f, unsigned int len);
 	static std::string toXml3dString(std::vector<aiMatrix4x4>* v);
 
+	static void stringToHTMLId(aiString& ai);
+
 	static float clampZero(float v);
 
 };
