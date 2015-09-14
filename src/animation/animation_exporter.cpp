@@ -203,7 +203,7 @@ void XML3DAnimationExporter::addKeyframeElementsToData(tinyxml2::XMLElement* ani
 
 	tinyxml2::XMLElement* rotationKey = animData->GetDocument()->NewElement("float4");
 	rotationKey->SetAttribute("name", "rotation");
-	translationKey->SetAttribute("key", key);
+	rotationKey->SetAttribute("key", key);
 	rotationKey->SetText(XML3DDataConverter::toXml3dString(&rotations).c_str());
 
 	animData->LinkEndChild(translationKey);
