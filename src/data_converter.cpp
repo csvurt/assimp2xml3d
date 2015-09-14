@@ -10,10 +10,10 @@ std::string XML3DDataConverter::toXml3dString(const aiMatrix4x4& m) {
 	std::stringstream ss;
 	ss << "transform: matrix3d(";
 	ss << std::setprecision(4)
-		<< m.a1 << ", " << m.b1 << ", " << m.c1 << ", " << m.d1 << ", "
-		<< m.a2 << ", " << m.b2 << ", " << m.c2 << ", " << m.d2 << ", "
-		<< m.a3 << ", " << m.b3 << ", " << m.c3 << ", " << m.d3 << ", "
-		<< m.a4 << ", " << m.b4 << ", " << m.c4 << ", " << m.d4 << ");";
+		<< clampZero(m.a1) << ", " << clampZero(m.b1) << ", " << clampZero(m.c1) << ", " << clampZero(m.d1) << ", "
+		<< clampZero(m.a2) << ", " << clampZero(m.b2) << ", " << clampZero(m.c2) << ", " << clampZero(m.d2) << ", "
+		<< clampZero(m.a3) << ", " << clampZero(m.b3) << ", " << clampZero(m.c3) << ", " << clampZero(m.d3) << ", "
+		<< clampZero(m.a4) << ", " << clampZero(m.b4) << ", " << clampZero(m.c4) << ", " << clampZero(m.d4) << ");";
 	std::string str = ss.str();
 	if (str.find("#Q") != std::string::npos) {
 		Logger::Warn("Invalid transformation matrix '" + str + "', replacing with Identity.");
