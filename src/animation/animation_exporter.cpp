@@ -154,23 +154,27 @@ void XML3DAnimationExporter::processAnimationKeyframes(const aiAnimation* anim, 
 		Logger::Debug("Could not find matching skeleton for the animation " + std::string(anim->mName.C_Str()));
 		return;
 	}
-
+	
 	const unsigned int numBones = skeleton->getNumberOfBones();
-	for (unsigned int i = 0; i < numKeyframes; i++) {
-		std::vector<aiVector3D*> translations(numBones, &zerov);
-		std::vector<aiQuaternion*> rotations(numBones, &zeroq);
+	std::vector<aiVector3D*> translations(numBones, &zerov);
+	std::vector<aiQuaternion*> rotations(numBones, &zeroq);
 
+	for (unsigned int i = 0; i < numKeyframes; i++) {
 		for (unsigned int ch = 0; ch < anim->mNumChannels; ch++) {
 			//Each channel holds a set of keyframes for a single bone, more or less
 			aiNodeAnim* channel = anim->mChannels[ch];
 			std::string boneName = std::string(channel->mNodeName.C_Str());
 			std::string strippedBoneName = stripAssimpSuffixFromBoneName(boneName);
-			const int boneIndex = skeleton->getIndexForBone(strippedBoneName);
 
-			if (channel->mNumPositionKeys >= numKeyframes) {
-				translations[boneIndex] = &channel->mPositionKeys[i].mValue;
+			const int boneIndex = skeleton->getIndexForBone(strippedBoneName);
+			if (boneIndex < 0) {
+				continue;
 			}
-			if (channel->mNumRotationKeys >= numKeyframes) {
+
+			if (channel->mNumPositionKeys > i && channel->mPositionKeys[0].mTime >= 0) {
+				translations[boneIndex] = &channel->mPositionKeys[i].mValue;
+			} 
+			if (channel->mNumRotationKeys > i && channel->mRotationKeys[0].mTime >= 0) {
 				rotations[boneIndex] = &channel->mRotationKeys[i].mValue;
 			}
 		}
