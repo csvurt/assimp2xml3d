@@ -21,8 +21,7 @@ XML3DBone::~XML3DBone() {
 void XML3DBone::createDebugXML(tinyxml2::XMLElement* container) {
 	tinyxml2::XMLElement* boneData = container->GetDocument()->NewElement("bone");
 	boneData->SetAttribute("name", mSceneNode->mName.C_Str());
-	boneData->SetAttribute("localTransform", XML3DDataConverter::toXml3dString(mLocalTransformation).c_str());
-	boneData->SetAttribute("globalTransform", XML3DDataConverter::toXml3dString(mGlobalTransformation).c_str());
+	boneData->SetAttribute("inverseBindPose", XML3DDataConverter::toXml3dString(mInverseBindPose).c_str());
 
 	auto it = mChildren.begin();
 	while (it != mChildren.end()) {

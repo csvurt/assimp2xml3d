@@ -20,10 +20,6 @@ XML3DSkeleton::~XML3DSkeleton() {
 
 void XML3DSkeleton::createBoneStructureRecursive(XML3DBone* currentBone, const aiNode* currentBoneNode) {
 	currentBone->mSceneNode = currentBoneNode;
-	currentBone->mLocalTransformation = currentBoneNode->mTransformation; 
-	currentBone->mGlobalTransformation = currentBone->mParent != NULL ?
-		currentBone->mParent->mGlobalTransformation * currentBoneNode->mTransformation :
-		currentBoneNode->mTransformation;
 
 	std::string nodeName = std::string(currentBoneNode->mName.C_Str());
 	if (nodeName.find(ASSIMP_FBX_SUFFIX) == std::string::npos) {
@@ -59,7 +55,7 @@ void XML3DSkeleton::createBoneData(tinyxml2::XMLElement* container) {
 		XML3DBone* bone = getBoneWithName(mBoneIndexVector.at(i));
 		const XML3DBone* parent = bone->mParent;
 		int parentIndex = -1;
-		while (parent != NULL && parentIndex < 0) {
+		while (parent != NULL && parentIndex < 0) { //Some parent bones may not be part of the proper skeleton (eg. Assimp's fbx sub-bones)
 			parentIndex = getIndexForBone(parent->mName);
 			parent = parent->mParent;
 		}
