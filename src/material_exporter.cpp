@@ -92,8 +92,8 @@ void XML3DMaterialExporter::processOpacity(tinyxml2::XMLElement* matElement, aiS
 		Logger::Warn("Material with name '" + std::string(materialName.C_Str()) + "' has an opacity value of 0. Meshes rendered with this material will be fully transparent!");
 	}
 	tinyxml2::XMLElement* opacity = xml3d->doc.NewElement("float");
-	opacity->SetAttribute("name", "transparency");
-	opacity->SetText(boost::lexical_cast<std::string>(1 - o).c_str());
+	opacity->SetAttribute("name", "opacity");
+	opacity->SetText(boost::lexical_cast<std::string>(o).c_str());
 	matElement->LinkEndChild(opacity);
 }
 
@@ -131,8 +131,7 @@ tinyxml2::XMLElement* XML3DMaterialExporter::processTexture(aiTextureType texTyp
 
 	tinyxml2::XMLElement* texElement = xml3d->doc.NewElement("texture");
 	std::stringstream ss;
-	ss << mapModeToString(wrapS) << " ";
-	ss << mapModeToString(wrapT);
+	ss << mapModeToString(wrapS) << " " << mapModeToString(wrapT);
 	texElement->SetAttribute("wrap", ss.str().c_str());
 	tinyxml2::XMLElement* imgElement = xml3d->doc.NewElement("img");
 	imgElement->SetAttribute("src", texPath.C_Str());
