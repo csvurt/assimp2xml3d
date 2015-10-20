@@ -3,8 +3,8 @@ project (assimp2xml3d)
 
 ########## Version number
 set(ASSIMP2XML3D_VERSION_MAJOR 0)
-set(ASSIMP2XML3D_VERSION_MINOR 1)
-set(ASSIMP2XML3D_VERSION_PATCH 1)
+set(ASSIMP2XML3D_VERSION_MINOR 2)
+set(ASSIMP2XML3D_VERSION_PATCH 0)
 configure_file(
 	"${PROJECT_SOURCE_DIR}/src/version.h.in"
 	"${PROJECT_BINARY_DIR}/version.h"
