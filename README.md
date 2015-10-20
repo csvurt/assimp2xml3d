@@ -39,10 +39,10 @@ default material unless this flag is set.
 
 ### Changelog
 
-TBD - v0.2
+20.10.2015 - v0.2
 
 * Move to XML3D 5.0, XML3D 4.x is no longer supported
-* Added a --no-materials flag
+* Added a --no-materials (-m) flag
 * Disabled mesh splitting since XML3D now uses the [OES_element_index_uint](https://www.khronos.org/registry/webgl/extensions/OES_element_index_uint/) extension
 
 28.07.2015 - v0.1.1
