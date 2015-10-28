@@ -48,6 +48,12 @@ void XML3DExporter::Export() {
 	doc.LinkEndChild(xml3d);
 
 	std::string id(filename);
+	if (id.find('/') != std::string::npos) {
+		id = id.substr(id.find_last_of('/') + 1, std::string::npos);
+	}
+	if (id.find('\\') != std::string::npos) {
+		id = id.substr(id.find_last_of('\\') + 1, std::string::npos);
+	}
 	id = id.substr(0, id.find_first_of('.'));
 	asset->SetAttribute("id", id.c_str());
 
