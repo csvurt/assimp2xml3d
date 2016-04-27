@@ -6,7 +6,6 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-#include <assimp/../../code/BoostWorkaround/boost/lexical_cast.hpp>
 
 namespace {
 	void ExportScene(const char*, Assimp::IOSystem*, const aiScene*, const Assimp::ExportProperties*);
@@ -79,8 +78,8 @@ void XML3DExporter::Export() {
 	// Flatten scene hierarchy into a list of assetmeshes
 	Export(asset, scene->mRootNode, aiMatrix4x4());
 
-	Logger::Info("Processed " + boost::lexical_cast<std::string>(mNumberOfMeshesExported) + " meshes and " +
-		boost::lexical_cast<std::string>(mNumberOfMaterialsExported) + " materials.");
+	Logger::Info("Processed " + std::to_string(mNumberOfMeshesExported) + " meshes and " +
+		std::to_string(mNumberOfMaterialsExported) + " materials.");
 }
 
 // Assimp will always generate a material even if it was instructed to ignore materials during the import process.
@@ -126,13 +125,13 @@ void XML3DExporter::stringToHTMLId(aiString& ai) {
 	std::string str(ai.C_Str());
 
 	if (!(str.length() > 0)) {
-		str = "_Generated_Name_" + boost::lexical_cast<std::string>(mChangedNamesCounter++);
+		str = "_Generated_Name_" + std::to_string(mChangedNamesCounter++);
 	}
 
 	std::replace(str.begin(), str.end(), ' ', '_');
 
 	if (usedNames.count(str) > 0) {
-		str += "_" + boost::lexical_cast<std::string>(mChangedNamesCounter++);
+		str += "_" + std::to_string(mChangedNamesCounter++);
 		Logger::Warn("Renamed '" + str.substr(0, str.find_last_of("_")) + "' to '" + str + "' to avoid duplicate IDs");
 	}
 	usedNames.emplace(str, 'x');

@@ -1,7 +1,9 @@
 #include "material_exporter.h"
 #include "logger.h"
 #include "data_converter.h"
-#include <assimp/../../code/BoostWorkaround/boost/lexical_cast.hpp>
+#include <string>
+#include <iostream>
+#include <sstream>
 
 static const std::map<aiTextureType, std::string> SupportedTextureTypes = {
 	{ aiTextureType_DIFFUSE, "diffuseTexture" },
@@ -79,7 +81,7 @@ void XML3DMaterialExporter::processShininess(tinyxml2::XMLElement* matElement) {
 	}
 	tinyxml2::XMLElement* shininess = xml3d->doc.NewElement("float");
 	shininess->SetAttribute("name", "shininess");
-	shininess->SetText(boost::lexical_cast<std::string>(s).c_str());
+	shininess->SetText(std::to_string(s).c_str());
 	matElement->LinkEndChild(shininess);
 }
 
@@ -93,7 +95,7 @@ void XML3DMaterialExporter::processOpacity(tinyxml2::XMLElement* matElement, aiS
 	}
 	tinyxml2::XMLElement* opacity = xml3d->doc.NewElement("float");
 	opacity->SetAttribute("name", "opacity");
-	opacity->SetText(boost::lexical_cast<std::string>(o).c_str());
+	opacity->SetText(std::to_string(o).c_str());
 	matElement->LinkEndChild(opacity);
 }
 
@@ -122,7 +124,7 @@ tinyxml2::XMLElement* XML3DMaterialExporter::processTexture(aiTextureType texTyp
 	aiString texPath;
 	aMat->Get(AI_MATKEY_TEXTURE(texType, 0), texPath);
 	if (texPath.length <= 0) {
-		Logger::Debug("Could not find texture path for texture channel " + boost::lexical_cast<std::string, int>(texType));
+		Logger::Debug("Could not find texture path for texture channel " + std::to_string(texType));
 		aiString matName;
 		aMat->Get(AI_MATKEY_NAME, matName);
 		Logger::Warn("Could not process a texture for material " + std::string(matName.C_Str()));
