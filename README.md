@@ -23,7 +23,7 @@ Each output file will contain a single ```<asset>```, nested ```<assets>``` are 
 assimp2xml3d is built using CMake. Before building for the first time the ```assimp``` and ```tinyxml2``` submodules should be
 updated using ```git submodule init && git submodule update```.
 
-The resulting project files will be generated in a new ```/assimp2xml3d``` subdirectory while the executables will be copied to ```/bin``` by default.
+It's recommended that you target an x64 architecture since Assimp can consume a lot of memory when processing large models. 
 
 ### Usage
 
@@ -39,7 +39,12 @@ default material unless this flag is set.
 
 ### Changelog
 
-20.10.2015 - v0.2
+29.04.2016 - v0.2.1
+
+* Updated Assimp and tinyxml2 dependencies to latest master builds
+* Ignore path prefixes when determining a name for the exported asset
+
+20.10.2015 - v0.2.0
 
 * Move to XML3D 5.0, XML3D 4.x is no longer supported
 * Added a --no-materials (-m) flag
@@ -49,7 +54,7 @@ default material unless this flag is set.
 
 * Fixed issues: [#2](https://github.com/csvurt/assimp2xml3d/issues/2)
 
-12.05.2015 - v0.1
+12.05.2015 - v0.1.0
 
 * Initial release
 * Support for meshes and textured materials
