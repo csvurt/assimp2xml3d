@@ -20,8 +20,7 @@ tinyxml2::XMLElement* XML3DMeshExporter::getAssetMesh(aiMatrix4x4* parentTransfo
 		aiMaterial* mat = xml3d->scene->mMaterials[aMesh->mMaterialIndex];
 		aiString name;
 		mat->Get(AI_MATKEY_NAME, name);
-		mat->AddProperty(&name, AI_MATKEY_NAME);
-		xml3d->stringToHTMLId(name);
+		xml3d->stringToHTMLId(name, false);
 		std::string namestr("#");
 		namestr.append(name.C_Str());
 		mesh->SetAttribute("material", namestr.c_str());

@@ -120,7 +120,7 @@ void XML3DExporter::writeFile() {
 }
 
 
-void XML3DExporter::stringToHTMLId(aiString& ai) {
+void XML3DExporter::stringToHTMLId(aiString& ai, bool checkForDuplicates) {
 	// Ensure the name is not empty and is safe to use as an HTML5 id string
 	std::string str(ai.C_Str());
 
@@ -130,7 +130,7 @@ void XML3DExporter::stringToHTMLId(aiString& ai) {
 
 	std::replace(str.begin(), str.end(), ' ', '_');
 
-	if (usedNames.count(str) > 0) {
+	if (checkForDuplicates && usedNames.count(str) > 0) {
 		str += "_" + std::to_string(mChangedNamesCounter++);
 		Logger::Warn("Renamed '" + str.substr(0, str.find_last_of("_")) + "' to '" + str + "' to avoid duplicate IDs");
 	}

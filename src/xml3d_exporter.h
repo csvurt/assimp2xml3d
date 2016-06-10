@@ -20,7 +20,7 @@ public:
 	void Export();
 	void Export(tinyxml2::XMLElement* parent, aiNode* an, const aiMatrix4x4& parentTransform);
 
-	void stringToHTMLId(aiString& str);
+	void stringToHTMLId(aiString& str, bool checkForDuplicates = true);
 
 private:
 	const char* filename;
