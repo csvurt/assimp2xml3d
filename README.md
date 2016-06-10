@@ -39,10 +39,11 @@ default material unless this flag is set.
 
 ### Changelog
 
-29.04.2016 - v0.2.1
+10.06.2016 - v0.2.1
 
 * Updated Assimp and tinyxml2 dependencies to latest master builds
 * Ignore path prefixes when determining a name for the exported asset
+* Fixed a case where material ID references would not be sanitized for HTML
 
 20.10.2015 - v0.2.0
 
